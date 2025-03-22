@@ -28,6 +28,16 @@ export default function AdminLoginForm() {
         role: "admin",
         redirect: false,
       });
+    
+      if ( result?.error && result?.error === "OTP required") {
+        const sendOTP = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          body: JSON.stringify({ email, role: "admin" }),
+        });
+        
+        router.push("/auth/login?role=admin&otpRequired=true");
+        return;
+      }
 
       if (result?.error) {
         setError("Invalid email or password");
