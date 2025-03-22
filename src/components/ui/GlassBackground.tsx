@@ -3,7 +3,7 @@
  import { useEffect, useRef } from "react";
  import gsap from "gsap";
 
- export function GlassBackground() {
+ export default function GlassBackground() {
    const containerRef = useRef<HTMLDivElement>(null);
 
    useEffect(() => {

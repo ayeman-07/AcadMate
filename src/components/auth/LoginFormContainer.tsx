@@ -8,7 +8,7 @@ interface LoginFormContainerProps {
   role: string;
 }
 
-export function LoginFormContainer({
+export default function LoginFormContainer({
   children,
   role,
 }: LoginFormContainerProps) {

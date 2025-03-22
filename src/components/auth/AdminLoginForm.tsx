@@ -7,7 +7,7 @@ import { FormInput } from "@/components/ui/FormInput";
 import { Mail, Lock, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function AdminLoginForm() {
+export default function AdminLoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,7 +37,8 @@ export function AdminLoginForm() {
       router.push("/dashboard/admin");
       router.refresh();
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      console.error("Login error:", error);
+      setError("Invalid credentials. Please try again.");
     } finally {
       setIsLoading(false);
     }

@@ -63,7 +63,7 @@ const studentSchema = new Schema<IStudent>(
     dob: {
       type: Schema.Types.Date,
       required: [true, "Date of birth is required"],
-      transform: function (value: any) {
+      transform: function (value: Date | null) {
         if (!value) return;
         return value
           .toLocaleDateString("en-GB", {
@@ -106,8 +106,12 @@ studentSchema.pre("save", async function (this: IStudent, next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
-  } catch (error: any) {
-    next(error);
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error);
+    } else {
+      next(new Error("Failed to hash password"));
+    }
   }
 });
 
@@ -118,10 +122,12 @@ studentSchema.methods.comparePassword = async function (
   try {
     return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Failed to compare passwords");
   }
 };
-
 
 const Student = models.Student || model<IStudent>("Student", studentSchema);
 
