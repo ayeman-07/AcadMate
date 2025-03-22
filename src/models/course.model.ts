@@ -4,7 +4,7 @@ export interface ICourse extends Document {
   name: string;
   code: string;
   description: string;
-  teacher: Types.ObjectId;
+  professor: Types.ObjectId;
   students: Types.ObjectId[];
   semester: number;
   department: string;
@@ -31,10 +31,10 @@ const courseSchema = new Schema<ICourse>(
       type: String,
       required: [true, "Course description is required"],
     },
-    teacher: {
+    professor: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Teacher is required"],
+      required: [true, "Professor is required"],
     },
     students: [
       {
@@ -75,7 +75,7 @@ const courseSchema = new Schema<ICourse>(
 // Create indexes
 courseSchema.index({ code: 1 }, { unique: true });
 courseSchema.index({ department: 1, semester: 1 });
-courseSchema.index({ teacher: 1 });
+courseSchema.index({ professor: 1 });
 
 const Course = models.Course || model<ICourse>("Course", courseSchema);
 

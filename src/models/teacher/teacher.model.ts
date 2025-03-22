@@ -9,9 +9,7 @@ export interface ITeacher extends Document {
   designation: string;
   avatar?: string;
   phoneNumber?: string;
-  address?: string;
   isActive: boolean;
-  lastLogin?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -38,7 +36,7 @@ const teacherSchema = new Schema<ITeacher>(
     department: {
       type: String,
       required: [true, "Department is required"],
-      enum: ["CSE", "ECE"],
+      trim: true,
     },
     designation: {
       type: String,
@@ -50,14 +48,9 @@ const teacherSchema = new Schema<ITeacher>(
       default: "",
     },
     phoneNumber: String,
-    address: String,
     isActive: {
       type: Boolean,
       default: true,
-    },
-    lastLogin: {
-      type: Date,
-      default: null,
     },
   },
   {
@@ -88,7 +81,6 @@ teacherSchema.methods.comparePassword = async function (
     throw error;
   }
 };
-
 
 const Teacher = models.Teacher || model<ITeacher>("Teacher", teacherSchema);
 

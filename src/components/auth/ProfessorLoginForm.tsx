@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { FormInput } from "@/components/ui/FormInput";
-import { GraduationCap, Lock, User } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function StudentLoginForm() {
+export function ProfessorLoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -18,23 +18,23 @@ export function StudentLoginForm() {
     setError("");
 
     const formData = new FormData(event.currentTarget);
-    const roll = formData.get("roll") as string;
+    const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
     try {
       const result = await signIn("credentials", {
-        roll: roll.toUpperCase(),
+        email: email.toLowerCase(),
         password,
-        role: "student",
+        role: "professor",
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Invalid roll number or password");
+        setError("Invalid email or password");
         return;
       }
 
-      router.push("/dashboard/student");
+      router.push("/dashboard/professor");
       router.refresh();
     } catch (error) {
       setError("An error occurred. Please try again.");
@@ -62,14 +62,14 @@ export function StudentLoginForm() {
       )}
 
       <FormInput
-        id="roll"
-        name="roll"
-        type="text"
-        label="Roll Number"
-        placeholder="Enter your roll number"
-        icon={GraduationCap}
+        id="email"
+        name="email"
+        type="email"
+        label="Email"
+        placeholder="Enter your email"
+        icon={Mail}
         required
-        autoComplete="off"
+        autoComplete="email"
       />
 
       <FormInput

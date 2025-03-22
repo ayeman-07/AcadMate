@@ -1,11 +1,9 @@
 import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 import { connectToDB } from "@/lib/db";
 import Student from "@/models/student/student.model";
-import Teacher from "@/models/teacher/teacher.model";
+import Professor from "@/models/professor/professor.model";
 import Admin from "@/models/admin/admin.model";
-import mongoose from "mongoose";
 
 const DB_URI = process.env.DB_URI;
 
@@ -50,8 +48,6 @@ export const authOptions: NextAuthOptions = {
 
         try {
           await connectToDB();
-          console.log("Database connected successfully");
-          console.log("MongoDB URI:", DB_URI);
 
           let user;
 
@@ -63,32 +59,18 @@ export const authOptions: NextAuthOptions = {
                 roll.toUpperCase()
               );
               try {
-                const allStudents = await Student.find({});
-                console.log("All students count:", allStudents.length);
-                console.log(
-                  "Connection state:",
-                  mongoose.connection.readyState
-                );
-                if (mongoose.connection.db) {
-                  console.log(
-                    "Current database:",
-                    mongoose.connection.db.databaseName
-                  );
-                }
-
                 user = await Student.findOne({
                   roll: roll.toUpperCase(),
                 }).select("+password");
-                console.log("Found student:", user ? "Yes" : "No");
               } catch (dbError) {
                 console.error("Database query error:", dbError);
                 throw dbError;
               }
               break;
 
-            case "teacher":
+            case "professor":
               if (!email) throw new Error("Email is required");
-              user = await Teacher.findOne({
+              user = await Professor.findOne({
                 email: email.toLowerCase(),
               }).select("+password");
               break;
@@ -108,23 +90,18 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Invalid credentials");
           }
 
-          // const isPasswordValid = await bcrypt.compare(password, user.password);
-          const isPasswordValid = password === user.password;
-          console.log(password, user.password, isPasswordValid);
+          // const isPasswordValid = await user.comparePassword(password);
+          const isPasswordValid = user.password == password;
           if (!isPasswordValid) {
             throw new Error("Invalid credentials");
           }
-
-          // Update last login
-          user.lastLogin = new Date();
-          await user.save();
 
           return {
             id: user._id.toString(),
             role,
             name: user.name,
             email: user.email,
-            roll: role === "student" ? user.roll : undefined,
+            roll: role === "student" ? user.roll : "NA",
           };
         } catch (error: any) {
           throw new Error(error.message || "Authentication failed");

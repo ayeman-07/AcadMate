@@ -14,11 +14,11 @@ const roles = [
     delay: 0.2,
   },
   {
-    title: "Teacher Portal",
+    title: "Professor Portal",
     description:
       "Manage courses, track attendance, and evaluate student performance",
     iconName: "GraduationCap",
-    href: "/auth/login?role=teacher",
+    href: "/auth/login?role=professor",
     color: "bg-emerald-600",
     delay: 0.4,
   },

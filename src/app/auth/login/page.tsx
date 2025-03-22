@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import { StudentLoginForm } from "@/components/auth/StudentLoginForm";
-import { TeacherLoginForm } from "@/components/auth/TeacherLoginForm";
+import { ProfessorLoginForm } from "@/components/auth/ProfessorLoginForm";
 import { AdminLoginForm } from "@/components/auth/AdminLoginForm";
+import { GlassBackground } from "@/components/ui/GlassBackground";
+import { LoginFormContainer } from "@/components/auth/LoginFormContainer";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -22,32 +24,20 @@ export default function LoginPage({
   }
 
   // Validate role
-  if (!["student", "teacher", "admin"].includes(role)) {
+  if (!["student", "professor", "admin"].includes(role)) {
     redirect("/");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-medium text-slate-900 dark:text-slate-100 mb-2 font-montserrat tracking-tight">
-            Welcome back
-          </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-sm">
-            Sign in to your {role} account
-          </p>
-        </div>
-
-        {role === "student" && <StudentLoginForm />}
-        {role === "teacher" && <TeacherLoginForm />}
-        {role === "admin" && <AdminLoginForm />}
-
-        <div className="mt-6 text-center">
-          <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors">
-            Forgot password?
-          </button>
-        </div>
+    <>
+      <GlassBackground />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <LoginFormContainer role={role}>
+          {role === "student" && <StudentLoginForm />}
+          {role === "professor" && <ProfessorLoginForm />}
+          {role === "admin" && <AdminLoginForm />}
+        </LoginFormContainer>
       </div>
-    </div>
+    </>
   );
 }

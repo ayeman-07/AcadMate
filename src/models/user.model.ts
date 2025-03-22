@@ -1,11 +1,11 @@
 import { Schema, model, models, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export type UserRole = "admin" | "teacher" | "student";
+export type UserRole = "admin" | "professor" | "student";
 
 export interface IUser extends Document {
   name: string;
-  email?: string; 
+  email?: string;
   password?: string;
   role: UserRole;
   avatar?: string;
@@ -42,7 +42,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     },
     role: {
       type: String,
-      enum: ["admin", "teacher", "student"],
+      enum: ["admin", "professor", "student"],
       default: "student",
     },
     avatar: {

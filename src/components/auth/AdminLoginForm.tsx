@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { FormInput } from "@/components/ui/FormInput";
+import { Mail, Lock, Shield } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -20,7 +23,7 @@ export function AdminLoginForm() {
 
     try {
       const result = await signIn("credentials", {
-        email,
+        email: email.toLowerCase(),
         password,
         role: "admin",
         redirect: false,
@@ -41,55 +44,67 @@ export function AdminLoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <motion.form
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.4 }}
+      onSubmit={onSubmit}
+      className="space-y-6"
+    >
       {error && (
-        <div className="p-3 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-lg">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-lg border border-red-200 dark:border-red-900"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
-      <div className="space-y-2">
-        <label
-          htmlFor="email"
-          className="text-sm font-medium text-slate-700 dark:text-slate-200"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          className="w-full px-3 py-2 text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400"
-          placeholder="Enter your email"
-        />
-      </div>
+      <FormInput
+        id="email"
+        name="email"
+        type="email"
+        label="Email"
+        placeholder="Enter your email"
+        icon={Mail}
+        required
+        autoComplete="email"
+      />
 
-      <div className="space-y-2">
-        <label
-          htmlFor="password"
-          className="text-sm font-medium text-slate-700 dark:text-slate-200"
-        >
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          className="w-full px-3 py-2 text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400"
-          placeholder="Enter your password"
-        />
-      </div>
+      <FormInput
+        id="password"
+        name="password"
+        type="password"
+        label="Password"
+        placeholder="Enter your password"
+        icon={Lock}
+        required
+      />
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         type="submit"
         disabled={isLoading}
-        className="w-full bg-violet-600 hover:bg-violet-500 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        {isLoading ? "Signing in..." : "Sign in"}
-      </button>
-    </form>
+        {isLoading ? (
+          <>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+            />
+            Signing in...
+          </>
+        ) : (
+          <>
+            <Shield className="w-5 h-5" />
+            Sign in
+          </>
+        )}
+      </motion.button>
+    </motion.form>
   );
 }

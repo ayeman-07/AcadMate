@@ -1,17 +1,20 @@
 import { Schema, model, models, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface IAdmin extends Document {
+export interface IProfessor extends Document {
   name: string;
   email: string;
   password: string;
+  department: string;
+  designation: string;
   avatar?: string;
   phoneNumber?: string;
+  address?: string;
   isActive: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const adminSchema = new Schema<IAdmin>(
+const professorSchema = new Schema<IProfessor>(
   {
     name: {
       type: String,
@@ -31,11 +34,22 @@ const adminSchema = new Schema<IAdmin>(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
+    department: {
+      type: String,
+      required: [true, "Department is required"],
+      enum: ["CSE", "ECE"],
+    },
+    designation: {
+      type: String,
+      required: [true, "Designation is required"],
+      trim: true,
+    },
     avatar: {
       type: String,
       default: "",
     },
     phoneNumber: String,
+    address: String,
     isActive: {
       type: Boolean,
       default: true,
@@ -47,7 +61,7 @@ const adminSchema = new Schema<IAdmin>(
 );
 
 // Hash password before saving
-adminSchema.pre("save", async function (next) {
+professorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
@@ -60,7 +74,7 @@ adminSchema.pre("save", async function (next) {
 });
 
 // Compare password method
-adminSchema.methods.comparePassword = async function (
+professorSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   try {
@@ -70,7 +84,7 @@ adminSchema.methods.comparePassword = async function (
   }
 };
 
+const Professor =
+  models.Professor || model<IProfessor>("Professor", professorSchema);
 
-const Admin = models.Admin || model<IAdmin>("Admin", adminSchema);
-
-export default Admin;
+export default Professor;

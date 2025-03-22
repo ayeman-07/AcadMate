@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Dr. Amit Kumar Sharma",
+    "email": "amit.sharma@acadmate.com",
+    "password": "professor123",
+    "department": "Computer Science",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91 9876543212",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Priya Gupta",
+    "email": "priya.gupta@acadmate.com",
+    "password": "professor123",
+    "department": "Electronics",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91 9876543213",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Rahul Verma",
+    "email": "rahul.verma@acadmate.com",
+    "password": "professor123",
+    "department": "Computer Science",
+    "designation": "Assistant Professor",
+    "avatar": "",
+    "phoneNumber": "+91 9876543214",
+    "isActive": true
+  }
+]

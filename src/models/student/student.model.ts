@@ -17,7 +17,6 @@ export interface IStudent extends Document {
   phoneNumber?: string;
   address?: string;
   isActive: boolean;
-  lastLogin?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -90,10 +89,6 @@ const studentSchema = new Schema<IStudent>(
     isActive: {
       type: Boolean,
       default: true,
-    },
-    lastLogin: {
-      type: Date,
-      default: null,
     },
   },
   {
