@@ -10,13 +10,14 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
+  LucideIcon,
 } from "lucide-react";
 
 interface Stat {
   title: string;
   value: string;
   change: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }
 
@@ -24,7 +25,7 @@ interface Activity {
   title: string;
   description: string;
   time: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }
 
@@ -32,7 +33,7 @@ interface Metric {
   title: string;
   value: string;
   trend: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }
 
@@ -129,7 +130,10 @@ const performanceMetrics: Metric[] = [
   },
 ];
 
-export default function AdminDashboard() {
+
+export default function AdminPage() {
+  
+
   return (
     <div className="space-y-6">
       <motion.div
@@ -143,7 +147,7 @@ export default function AdminDashboard() {
             Dashboard Overview
           </h1>
           <p className="text-gray-300">
-            Welcome back! Here's what's happening in your institution.
+            Welcome back! Here&apos;s what&apos;s happening in your institution.
           </p>
         </div>
       </motion.div>

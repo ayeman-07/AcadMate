@@ -17,14 +17,13 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
-  Menu,
   X,
+  LucideIcon,
 } from "lucide-react";
-import { div } from "framer-motion/client";
 
 interface SidebarItem {
   title: string;
-  icon: any;
+  icon: LucideIcon;
   href: string;
   subItems?: {
     title: string;

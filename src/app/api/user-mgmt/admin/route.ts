@@ -4,6 +4,14 @@ import authOptions from "@/lib/authOptions";
 import { connectToDB } from "@/lib/db";
 import Admin from "@/models/admin/admin.model";
 
+interface QueryParams {
+  role?: string;
+  $or?: Array<{
+    name?: { $regex: string; $options: string };
+    email?: { $regex: string; $options: string };
+  }>;
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -27,16 +35,13 @@ export async function POST(req: Request) {
     }
 
     // Create new user
-    const user = await Admin.create({
+    await Admin.create({
       name,
       email,
       password,
     });
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user.toObject();
-
-    return NextResponse.json(userWithoutPassword);
+    return NextResponse.json({ message: "User created successfully" });
   } catch (error) {
     console.error("[USER_MANAGEMENT_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });
@@ -59,7 +64,7 @@ export async function GET(req: Request) {
     await connectToDB();
 
     // Build query
-    const query: any = {};
+    const query: QueryParams = {};
     if (role) query.role = role;
     if (search) {
       query.$or = [

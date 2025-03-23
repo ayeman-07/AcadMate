@@ -38,7 +38,7 @@ const authOptions: NextAuthOptions = {
         password: { type: "password" },
         otp: { type: "text" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials) throw new Error("No credentials provided");
 
         const { role, email, roll, password, otp } = credentials;
