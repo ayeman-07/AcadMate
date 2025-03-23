@@ -17,6 +17,8 @@ export default function OTPForm({ email, role }: OTPFormProps) {
   const [error, setError] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
+  const hasSubmitted = useRef(false);
 
   // Mask email for display
   const maskedEmail = email.replace(/(?<=.{1}).*(?=@)/, "********");
@@ -25,6 +27,15 @@ export default function OTPForm({ email, role }: OTPFormProps) {
     // Focus first input on mount
     inputRefs.current[0]?.focus();
   }, []);
+
+  // Watch for complete OTP
+  useEffect(() => {
+    const otpString = otp.join("");
+    if (otpString.length === 6 && !isLoading && !hasSubmitted.current) {
+      hasSubmitted.current = true;
+      formRef.current?.requestSubmit();
+    }
+  }, [otp, isLoading]);
 
   const handleChange = (index: number, value: string) => {
     // Only allow numbers
@@ -96,6 +107,10 @@ export default function OTPForm({ email, role }: OTPFormProps) {
 
       if (result?.error) {
         setError("Invalid or expired OTP");
+        // Reset form for another attempt
+        setOtp(["", "", "", "", "", ""]);
+        hasSubmitted.current = false;
+        inputRefs.current[0]?.focus();
         return;
       }
 
@@ -104,6 +119,10 @@ export default function OTPForm({ email, role }: OTPFormProps) {
     } catch (error) {
       console.error("OTP verification error:", error);
       setError("Failed to verify OTP. Please try again.");
+      // Reset form for another attempt
+      setOtp(["", "", "", "", "", ""]);
+      hasSubmitted.current = false;
+      inputRefs.current[0]?.focus();
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +130,7 @@ export default function OTPForm({ email, role }: OTPFormProps) {
 
   return (
     <motion.form
+      ref={formRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.4 }}
