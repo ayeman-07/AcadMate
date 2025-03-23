@@ -47,7 +47,7 @@ export default function AdminLoginForm() {
         return;
       }
 
-      router.push("/dashboard/admin");
+      router.push("/admin");
       router.refresh();
     } catch (error) {
       console.error("Login error:", error);
