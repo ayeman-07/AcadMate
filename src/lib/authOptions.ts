@@ -4,7 +4,6 @@ import { connectToDB } from "@/lib/db";
 import Student from "@/models/student/student.model";
 import Professor from "@/models/professor/professor.model";
 import Admin from "@/models/admin/admin.model";
-import { sendOtpToEmail, verifyOtp } from "@/lib/otp";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -70,7 +69,7 @@ const authOptions: NextAuthOptions = {
           if (!user || !user.password) throw new Error("Invalid credentials");
 
           const isPasswordValid = user.password === password;
-          if (!isPasswordValid) throw new Error("Invalid credentials");
+          if (!isPasswordValid && !otp) throw new Error("Invalid credentials");
 
           if (role === "student") {
             return {
@@ -89,9 +88,21 @@ const authOptions: NextAuthOptions = {
           ) {
             throw new Error("OTP required");
           }
+          if (otp) {
+            const otpVerification = await fetch(
+              `${process.env.NEXTAUTH_URL}/api/auth/verify-otp`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp }),
+              }
+            );
 
-          const isOtpValid = await verifyOtp(user._id, otp);
-          if (!isOtpValid) throw new Error("Invalid or expired OTP");
+            const data = await otpVerification.json();
+            console.log(data);
+            const isOtpValid = data.message === "OTP verified successfully";
+            if (!isOtpValid) throw new Error("Invalid or expired OTP");
+          }
 
           return {
             id: user._id.toString(),

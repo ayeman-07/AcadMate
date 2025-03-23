@@ -34,8 +34,11 @@ export default function AdminLoginForm() {
           method: "POST",
           body: JSON.stringify({ email, role: "admin" }),
         });
-        
-        router.push("/auth/login?role=admin&otpRequired=true");
+        if (sendOTP.ok) {
+          router.push("/auth/login?role=admin&otpRequired=true&email=" + email);
+        } else {
+          setError("Failed to send OTP");
+        }
         return;
       }
 

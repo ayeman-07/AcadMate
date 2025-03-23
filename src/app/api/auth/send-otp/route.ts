@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         ${otp}
       </div>
       <p style="font-size: 16px; color: #333;">
-        This OTP will expire in <b>5 minutes</b>.
+        This OTP will expire in <b>10 minutes</b>.
       </p>
       <p style="font-size: 14px; color: #777;">
         If you did not request this OTP, please ignore this email.
