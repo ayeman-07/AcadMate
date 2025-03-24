@@ -21,14 +21,14 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, password, roll, department, semester, section } = body;
+    const { name, email, password, roll, branch, semester, section } = body;
 
     if (
       !name ||
       !email ||
       !password ||
       !roll ||
-      !department ||
+      !branch ||
       !semester ||
       !section
     ) {
@@ -37,7 +37,6 @@ export async function POST(req: Request) {
 
     await connectToDB();
 
-    // Check if student already exists
     const existingStudent = await Student.findOne({
       $or: [{ email }, { roll: roll.toUpperCase() }],
     });
@@ -45,13 +44,12 @@ export async function POST(req: Request) {
       return new NextResponse("Student already exists", { status: 400 });
     }
 
-    // Create new student
     await Student.create({
       name,
       email,
       password,
       roll: roll.toUpperCase(),
-      department,
+      branch,
       semester,
       section,
     });

@@ -40,10 +40,10 @@ const sidebarItems: SidebarItem[] = [
   {
     title: "User",
     icon: Users,
-    href: "/admin/users",
+    href: "/admin/users/students",
     subItems: [
       { title: "Students", href: "/admin/users/students" },
-      { title: "Teachers", href: "/admin/users/teachers" },
+      { title: "Professors", href: "/admin/users/professors" },
       { title: "Staff", href: "/admin/users/staff" },
     ],
   },

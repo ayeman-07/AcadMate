@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface ISemesterResult extends Document {
   student: mongoose.Types.ObjectId;
   semester: number;
-  session: string; 
+  session: string;
   totalMarks: number; 
   totalCredits: number; 
   sgpa: number;

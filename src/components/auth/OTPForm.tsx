@@ -114,12 +114,11 @@ export default function OTPForm({ email, role }: OTPFormProps) {
         return;
       }
 
-      router.push(`/dashboard/${role}`);
+      router.push(`/${role}`);
       router.refresh();
     } catch (error) {
       console.error("OTP verification error:", error);
       setError("Failed to verify OTP. Please try again.");
-      // Reset form for another attempt
       setOtp(["", "", "", "", "", ""]);
       hasSubmitted.current = false;
       inputRefs.current[0]?.focus();

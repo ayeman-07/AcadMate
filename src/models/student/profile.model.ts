@@ -10,6 +10,7 @@ interface IProfile extends Document {
   motherMobile: string;
   studentMobile: string;
   address: string;
+  dob: Date;
   nationality: string;
   category: "General" | "OBC" | "SC" | "ST" | "EWS";
   tenthMarksheetUrl: string; 
@@ -31,6 +32,7 @@ const ProfileSchema = new Schema<IProfile>(
     motherMobile: { type: String, required: true },
     studentMobile: { type: String, required: true },
     address: { type: String, required: true },
+    dob: { type: Date, required: true },
     category: {
       type: String,
       enum: ["General", "OBC", "SC", "ST", "EWS"],

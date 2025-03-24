@@ -11,7 +11,6 @@ export interface IStudent extends Document {
   branch: Branch;
   section: Section;
   semester: number;
-  dob: Date;
   avatar?: string;
   email?: string;
   phoneNumber?: string;
@@ -59,20 +58,6 @@ const studentSchema = new Schema<IStudent>(
       required: [true, "Semester is required"],
       min: 1,
       max: 8,
-    },
-    dob: {
-      type: Schema.Types.Date,
-      required: [true, "Date of birth is required"],
-      transform: function (value: Date | null) {
-        if (!value) return;
-        return value
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .replace(/\//g, "-");
-      },
     },
     avatar: {
       type: String,
