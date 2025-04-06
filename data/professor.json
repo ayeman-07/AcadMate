@@ -1,32 +1,112 @@
 [
   {
-    "name": "Dr. Amit Kumar Sharma",
-    "email": "amit.sharma@acadmate.com",
-    "password": "professor123",
-    "department": "Computer Science",
+    "name": "Dr. Ramesh Patel",
+    "email": "ramesh.patel@university.in",
+    "password": "secure123",
+    "department": "CSE",
     "designation": "Associate Professor",
     "avatar": "",
-    "phoneNumber": "+91 9876543212",
+    "phoneNumber": "+91-9876543210",
+    "address": "Ghod Dod Road, Surat, Gujarat, India",
     "isActive": true
   },
   {
-    "name": "Dr. Priya Gupta",
-    "email": "priya.gupta@acadmate.com",
-    "password": "professor123",
-    "department": "Electronics",
-    "designation": "Professor",
-    "avatar": "",
-    "phoneNumber": "+91 9876543213",
-    "isActive": true
-  },
-  {
-    "name": "Dr. Rahul Verma",
-    "email": "rahul.verma@acadmate.com",
-    "password": "professor123",
-    "department": "Computer Science",
+    "name": "Prof. Meena Shah",
+    "email": "meena.shah@university.in",
+    "password": "password456",
+    "department": "ECE",
     "designation": "Assistant Professor",
     "avatar": "",
-    "phoneNumber": "+91 9876543214",
+    "phoneNumber": "+91-9825012345",
+    "address": "Adajan Gam, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Arvind Desai",
+    "email": "arvind.desai@university.in",
+    "password": "arvindpass",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9512345678",
+    "address": "Vesu, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Nita Joshi",
+    "email": "nita.joshi@university.in",
+    "password": "nita789",
+    "department": "ECE",
+    "designation": "Assistant Professor",
+    "avatar": "",
+    "phoneNumber": "+91-8866445522",
+    "address": "City Light, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Vikram Bhatt",
+    "email": "vikram.bhatt@university.in",
+    "password": "vikrampass",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9090909090",
+    "address": "Parle Point, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Seema Trivedi",
+    "email": "seema.trivedi@university.in",
+    "password": "seema123",
+    "department": "ECE",
+    "designation": "Lecturer",
+    "avatar": "",
+    "phoneNumber": "+91-9765432101",
+    "address": "Althan, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Harshil Mehta",
+    "email": "harshil.mehta@university.in",
+    "password": "harshil999",
+    "department": "CSE",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9988776655",
+    "address": "Katargam, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Kiran Bhagat",
+    "email": "kiran.bhagat@university.in",
+    "password": "kiranbhagat",
+    "department": "ECE",
+    "designation": "Assistant Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9123456789",
+    "address": "Nanpura, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Asha Rana",
+    "email": "asha.rana@university.in",
+    "password": "asharana123",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9345678901",
+    "address": "Udhna, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Tushar Gohil",
+    "email": "tushar.gohil@university.in",
+    "password": "tushargo123",
+    "department": "ECE",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9001234567",
+    "address": "Pal, Surat, Gujarat, India",
     "isActive": true
   }
 ]
