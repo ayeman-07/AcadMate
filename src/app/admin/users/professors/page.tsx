@@ -36,7 +36,7 @@ export default function ProfessorManagement() {
     specialization: "",
   });
 
-  const departments = ["CSE", "ECE", "ME", "CE", "IT", "EE"];
+  const departments = ["CSE", "ECE"];
   const designations = [
     "Professor",
     "Associate Professor",
@@ -180,11 +180,11 @@ export default function ProfessorManagement() {
         <select
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
-          className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+          className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-gray-200"
         >
           <option value="">All Departments</option>
           {departments.map((dept) => (
-            <option key={dept} value={dept}>
+            <option key={dept} value={dept} className="bg-gray-800 text-gray-200">
               {dept}
             </option>
           ))}
@@ -192,11 +192,11 @@ export default function ProfessorManagement() {
         <select
           value={designation}
           onChange={(e) => setDesignation(e.target.value)}
-          className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+          className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-gray-200"
         >
           <option value="">All Designations</option>
           {designations.map((desig) => (
-            <option key={desig} value={desig}>
+            <option key={desig} value={desig} className="bg-gray-800 text-gray-200">
               {desig}
             </option>
           ))}
@@ -257,19 +257,19 @@ export default function ProfessorManagement() {
         </table>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4">
         <div className="flex gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
           >
             Previous
           </button>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
           >
             Next
           </button>
@@ -340,11 +340,11 @@ export default function ProfessorManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, department: e.target.value })
                   }
-                  className="w-full px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-gray-200"
                 >
                   <option value="">Select Department</option>
                   {departments.map((dept) => (
-                    <option key={dept} value={dept}>
+                    <option key={dept} value={dept} className="bg-gray-800 text-gray-200">
                       {dept}
                     </option>
                   ))}
@@ -360,11 +360,11 @@ export default function ProfessorManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, designation: e.target.value })
                   }
-                  className="w-full px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-gray-200"
                 >
                   <option value="">Select Designation</option>
                   {designations.map((desig) => (
-                    <option key={desig} value={desig}>
+                    <option key={desig} value={desig} className="bg-gray-800 text-gray-200">
                       {desig}
                     </option>
                   ))}

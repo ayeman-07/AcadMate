@@ -281,19 +281,19 @@ export default function StudentManagement() {
         </table>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4">
         <div className="flex gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
           >
             Previous
           </button>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
           >
             Next
           </button>

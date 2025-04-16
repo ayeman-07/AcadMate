@@ -108,5 +108,115 @@
     "phoneNumber": "+91-9001234567",
     "address": "Pal, Surat, Gujarat, India",
     "isActive": true
+  },
+  {
+    "name": "Dr. Snehal Deshmukh",
+    "email": "snehal.deshmukh@university.in",
+    "password": "snehal321",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9871112233",
+    "address": "Bhatar Road, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Rajeev Soni",
+    "email": "rajeev.soni@university.in",
+    "password": "soniraj123",
+    "department": "ECE",
+    "designation": "Assistant Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9812345670",
+    "address": "Rander, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Bhavna Chauhan",
+    "email": "bhavna.chauhan@university.in",
+    "password": "bhavna789",
+    "department": "CSE",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9823456789",
+    "address": "Piplod, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Chirag Shukla",
+    "email": "chirag.shukla@university.in",
+    "password": "chiragpass",
+    "department": "ECE",
+    "designation": "Lecturer",
+    "avatar": "",
+    "phoneNumber": "+91-9797979797",
+    "address": "Athwa Gate, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Neha Barot",
+    "email": "neha.barot@university.in",
+    "password": "neha@2025",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9966332211",
+    "address": "Dindoli, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Akash Rana",
+    "email": "akash.rana@university.in",
+    "password": "akashrana",
+    "department": "ECE",
+    "designation": "Assistant Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9345612870",
+    "address": "Surat Dumas Road, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Jyoti Parmar",
+    "email": "jyoti.parmar@university.in",
+    "password": "jyoti2025",
+    "department": "CSE",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9123098765",
+    "address": "Sachin, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Nirav Bhatt",
+    "email": "nirav.bhatt@university.in",
+    "password": "niravbhatt",
+    "department": "ECE",
+    "designation": "Lecturer",
+    "avatar": "",
+    "phoneNumber": "+91-9988771122",
+    "address": "Kapodra, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Dr. Anjali Sharma",
+    "email": "anjali.sharma@university.in",
+    "password": "anjali123",
+    "department": "CSE",
+    "designation": "Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9876054321",
+    "address": "Sarthana Jakatnaka, Surat, Gujarat, India",
+    "isActive": true
+  },
+  {
+    "name": "Prof. Hardik Trivedi",
+    "email": "hardik.trivedi@university.in",
+    "password": "hardik2025",
+    "department": "ECE",
+    "designation": "Associate Professor",
+    "avatar": "",
+    "phoneNumber": "+91-9112233445",
+    "address": "Lambe Hanuman Road, Surat, Gujarat, India",
+    "isActive": true
   }
 ]

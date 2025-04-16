@@ -1,0 +1,79 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import {
+  BookOpen,
+  BarChart2,
+  Users,
+  Settings,
+  LogOut,
+  Home,
+} from "lucide-react";
+
+const navigation = [
+  { name: "Dashboard", href: "/professor/dashboard", icon: Home },
+  { name: "Marks Entry", href: "/professor/marks", icon: BookOpen },
+  { name: "Results", href: "/professor/results", icon: BarChart2 },
+  { name: "Students", href: "/professor/students", icon: Users },
+  { name: "Settings", href: "/professor/settings", icon: Settings },
+];
+
+export default function ProfessorLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className="w-64 bg-black/30 backdrop-blur-lg border-r border-white/10 p-4">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-xl font-bold">Professor Portal</h1>
+          </div>
+          <nav className="space-y-2">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link key={item.name} href={item.href}>
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-indigo-600 text-white"
+                        : "text-gray-300 hover:bg-white/5"
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.name}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="mt-auto pt-8">
+            <Link href="/auth/professor/login">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-white/5 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </motion.div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+      </div>
+    </div>
+  );
+} 

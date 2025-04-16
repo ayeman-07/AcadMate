@@ -69,7 +69,7 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const department = searchParams.get("department");
+    const branch = searchParams.get("branch");
     const semester = searchParams.get("semester");
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
@@ -79,7 +79,7 @@ export async function GET(req: Request) {
 
     // Build query
     const query: QueryParams = {};
-    if (department) query.department = department;
+    if (branch) query.branch = branch;
     if (semester) query.semester = semester;
     if (search) {
       query.$or = [
