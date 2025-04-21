@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+
 import Exam from "@/models/exams/exam.model";
-import { connectToDatabase } from "@/lib/db";
+
+import authOptions from "@/lib/authOptions";
+import { connectToDB } from "@/lib/db";
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectToDatabase();
+    await connectToDB();
     const session = await getServerSession(authOptions);
 
     if (!session) {
@@ -40,7 +42,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectToDatabase();
+    await connectToDB();
     const session = await getServerSession(authOptions);
 
     if (!session) {
@@ -83,7 +85,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectToDatabase();
+    await connectToDB();
     const session = await getServerSession(authOptions);
 
     if (!session) {

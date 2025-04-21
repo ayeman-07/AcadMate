@@ -1,5 +1,5 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+// import { getServerSession } from "next-auth";
+// import { redirect } from "next/navigation";
 import CreateExamForm from "@/components/exams/CreateExamForm";
 
 export default async function AdminCreateExamPage() {

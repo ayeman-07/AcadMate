@@ -1,6 +1,6 @@
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 // import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import CreateProfessorForm from "@/components/admin/CreateProfessorForm";
 // import AdminLayout from "@/components/admin/AdminLayout";
 
