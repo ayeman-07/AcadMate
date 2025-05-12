@@ -10,12 +10,10 @@ export interface IStudent extends Document {
   password: string;
   branch: Branch;
   section: Section;
-  semester: number;
+  currSem: number;
   avatar?: string;
   email?: string;
   phoneNumber?: string;
-  address?: string;
-  isActive: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -53,7 +51,7 @@ const studentSchema = new Schema<IStudent>(
       required: [true, "Section is required"],
       enum: ["1", "2"],
     },
-    semester: {
+    currSem: {
       type: Number,
       required: [true, "Semester is required"],
       min: 1,
@@ -70,11 +68,6 @@ const studentSchema = new Schema<IStudent>(
       sparse: true,
     },
     phoneNumber: String,
-    address: String,
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,
