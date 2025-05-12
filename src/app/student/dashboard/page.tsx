@@ -1,60 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { PieChart, BarChart2, Calendar, Clipboard } from "lucide-react";
-import { ChevronDown } from "lucide-react"; // import ChevronDown for the dropdown arrow
+import { PieChart, BarChart2, Calendar, Clipboard, BookOpen } from "lucide-react";
 
 export default function StudentDashboard() {
-  const [selectedSem, setSelectedSem] = useState("Semester 5");
-  const semesters = [
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-    "Semester 5",
-    "Semester 6",
-    "Semester 7",
-    "Semester 8",
-  ];
-
   const stats = [
     { title: "Overall Attendance", value: "68%", icon: PieChart, color: "bg-blue-500" },
     { title: "Average Marks", value: "82", icon: BarChart2, color: "bg-green-500" },
     { title: "Upcoming Exams", value: "3", icon: Calendar, color: "bg-indigo-500" },
     { title: "Classes until 75%", value: "12", icon: Clipboard, color: "bg-yellow-500" },
+    { title: "Current CGPA", value: "8.42", icon: BookOpen, color: "bg-purple-500" },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Top Bar with Dropdown */}
-      <div className="flex justify-end">
-  <div className="relative inline-block text-left">
-    <select
-      value={selectedSem}
-      onChange={(e) => setSelectedSem(e.target.value)}
-      className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    >
-      {semesters.map((sem) => (
-        <option
-          key={sem}
-          value={sem}
-          className="bg-gray-800 text-white"
-        >
-          {sem}
-        </option>
-      ))}
-    </select>
-    <ChevronDown className="absolute right-2 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
-  </div>
-</div>
-
       {/* Dashboard Heading */}
       <div>
         <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {stats.map((stat) => (
           <div
             key={stat.title}

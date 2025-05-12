@@ -1,7 +1,9 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // <-- this way
 
 export default function ResultsPage() {
   const semesters = [
@@ -14,98 +16,88 @@ export default function ResultsPage() {
     "Semester 7",
     "Semester 8",
   ];
-
-  const currentSemester = 5; // Default selected semester
+  const currentSemester = 5;
   const [selectedSemester, setSelectedSemester] = useState(currentSemester);
 
-  // Hardcoded marks data
   const resultsData: { [key: number]: { subject: string; quiz1: string; midsem: string; quiz2: string; endsem: string; }[] } = {
     5: [
-      {
-        subject: "Operating Systems",
-        quiz1: "27/30",
-        midsem: "42/50",
-        quiz2: "26/30",
-        endsem: "Pending",
-      },
-      {
-        subject: "Computer Networks",
-        quiz1: "28/30",
-        midsem: "44/50",
-        quiz2: "29/30",
-        endsem: "Pending",
-      },
-      {
-        subject: "Database Systems",
-        quiz1: "26/30",
-        midsem: "41/50",
-        quiz2: "27/30",
-        endsem: "Pending",
-      },
-      {
-        subject: "Software Engineering",
-        quiz1: "25/30",
-        midsem: "39/50",
-        quiz2: "Pending",
-        endsem: "Pending",
-      },
+      { subject: "Operating Systems", quiz1: "27/30", midsem: "42/50", quiz2: "26/30", endsem: "Pending" },
+      { subject: "Computer Networks", quiz1: "28/30", midsem: "44/50", quiz2: "29/30", endsem: "Pending" },
+      { subject: "Database Systems", quiz1: "26/30", midsem: "41/50", quiz2: "27/30", endsem: "Pending" },
+      { subject: "Software Engineering", quiz1: "25/30", midsem: "39/50", quiz2: "Pending", endsem: "Pending" },
     ],
     4: [
-      {
-        subject: "Data Structures",
-        quiz1: "26/30",
-        midsem: "43/50",
-        quiz2: "27/30",
-        endsem: "81/100",
-      },
-      {
-        subject: "Discrete Mathematics",
-        quiz1: "24/30",
-        midsem: "42/50",
-        quiz2: "25/30",
-        endsem: "79/100",
-      },
+      { subject: "Data Structures", quiz1: "26/30", midsem: "43/50", quiz2: "27/30", endsem: "81/100" },
+      { subject: "Discrete Mathematics", quiz1: "24/30", midsem: "42/50", quiz2: "25/30", endsem: "79/100" },
     ],
     3: [
-      {
-        subject: "Digital Logic Design",
-        quiz1: "23/30",
-        midsem: "40/50",
-        quiz2: "24/30",
-        endsem: "77/100",
-      },
-      {
-        subject: "Object Oriented Programming",
-        quiz1: "27/30",
-        midsem: "45/50",
-        quiz2: "28/30",
-        endsem: "85/100",
-      },
+      { subject: "Digital Logic Design", quiz1: "23/30", midsem: "40/50", quiz2: "24/30", endsem: "77/100" },
+      { subject: "Object Oriented Programming", quiz1: "27/30", midsem: "45/50", quiz2: "28/30", endsem: "85/100" },
     ],
   };
 
   const subjects = resultsData[selectedSemester] || [];
 
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
+    pdf.setFontSize(18);
+    pdf.text(`Results - ${semesters[selectedSemester - 1]}`, 20, 30);
+  
+    const tableColumn = ["Subject", "Quiz 1", "Midsem", "Quiz 2", "Endsem"];
+    const tableRows: any[] = [];
+  
+    subjects.forEach((subject) => {
+      const subjectData = [
+        subject.subject,
+        subject.quiz1,
+        subject.midsem,
+        subject.quiz2,
+        subject.endsem,
+      ];
+      tableRows.push(subjectData);
+    });
+  
+    autoTable(pdf, {  // <-- call autoTable like this
+      head: [tableColumn],
+      body: tableRows,
+      startY: 50,
+      styles: {
+        fontSize: 12,
+      },
+      headStyles: {
+        fillColor: [79, 70, 229],
+        textColor: 255,
+        halign: "center",
+      },
+      bodyStyles: {
+        halign: "center",
+      },
+    });
+  
+    pdf.save(`results_semester_${selectedSemester}.pdf`);
+  };
+  
+
   return (
     <div className="space-y-6">
       {/* Header with Dropdown */}
       <div className="flex justify-between items-center">
-  <h1 className="text-2xl font-bold">Results</h1>
-  <div className="relative inline-block text-left">
-    <select
-      className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      value={selectedSemester}
-      onChange={(e) => setSelectedSemester(Number(e.target.value))}
-    >
-      {semesters.map((sem, idx) => (
-        <option key={idx} value={idx + 1} className="bg-gray-800 text-white">
-          {sem}
-        </option>
-      ))}
-    </select>
-    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-  </div>
-</div>
+        <h1 className="text-2xl font-bold">Results</h1>
+        <div className="relative inline-block text-left">
+          <select
+            className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={selectedSemester}
+            onChange={(e) => setSelectedSemester(Number(e.target.value))}
+          >
+            {semesters.map((sem, idx) => (
+              <option key={idx} value={idx + 1} className="bg-gray-800 text-white">
+                {sem}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+      </div>
 
       {/* Results Table */}
       <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 overflow-x-auto">
@@ -138,6 +130,16 @@ export default function ResultsPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Download PDF Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={handleDownloadPDF}
+          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+        >
+          Download PDF
+        </button>
       </div>
     </div>
   );
