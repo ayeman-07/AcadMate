@@ -1,15 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface IExam extends Document {
-  title: string; // Exam Name
+  title: string; 
   subject: string;
-  examType: string; // Example: "Quiz 1", "Mid Term", "End Sem"
+  examType: string;
   semester: number;
   department: string;
   maxMarks: number;
   examDate: Date;
-  duration: number; // In minutes
-  paperSetter: mongoose.Types.ObjectId; // Reference to Professor
+  duration: string;
+  paperSetter: mongoose.Types.ObjectId; 
 }
 
 const ExamSchema = new Schema<IExam>(
@@ -21,11 +21,10 @@ const ExamSchema = new Schema<IExam>(
     department: { type: String, required: true }, // Example: "CSE"
     maxMarks: { type: Number, required: true },
     examDate: { type: Date, required: true },
-    duration: { type: Number, required: true },
+    duration: { type: String, required: true },
     paperSetter: {
       type: Schema.Types.ObjectId,
       ref: "Professor",
-      required: true,
     },
   },
   { timestamps: true }

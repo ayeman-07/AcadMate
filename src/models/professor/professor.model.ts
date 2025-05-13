@@ -6,11 +6,9 @@ export interface IProfessor extends Document {
   email: string;
   password: string;
   department: string;
-  designation: string;
+  designation?: string;
   avatar?: string;
   phoneNumber?: string;
-  address?: string;
-  isActive: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -41,19 +39,12 @@ const professorSchema = new Schema<IProfessor>(
     },
     designation: {
       type: String,
-      required: [true, "Designation is required"],
-      trim: true,
     },
     avatar: {
       type: String,
       default: "",
     },
     phoneNumber: String,
-    address: String,
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,
