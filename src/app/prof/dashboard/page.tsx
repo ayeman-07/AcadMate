@@ -160,7 +160,7 @@ export default function DashboardOverview() {
         >
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="space-y-4">
-            <Link href="/professor/marks">
+            <Link href="/prof/marks/selection">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -170,7 +170,7 @@ export default function DashboardOverview() {
                 <span>Enter Marks</span>
               </motion.div>
             </Link>
-            <Link href="/professor/results">
+            <Link href="/prof/results">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -180,7 +180,7 @@ export default function DashboardOverview() {
                 <span>View Results</span>
               </motion.div>
             </Link>
-            <Link href="/professor/students">
+            <Link href="/prof/students">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
