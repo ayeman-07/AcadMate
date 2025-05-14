@@ -5,7 +5,7 @@ export interface IProfessor extends Document {
   name: string;
   email: string;
   password: string;
-  department: string;
+  department?: string;
   designation?: string;
   avatar?: string;
   phoneNumber?: string;
@@ -34,7 +34,6 @@ const professorSchema = new Schema<IProfessor>(
     },
     department: {
       type: String,
-      required: [true, "Department is required"],
       enum: ["CSE", "ECE"],
     },
     designation: {

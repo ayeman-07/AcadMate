@@ -1,0 +1,93 @@
+[
+  {
+    "professorName": "Dr. Tanmay Dubey",
+    "subjectCode": "ECE601",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Sudeep Sharma",
+    "subjectCode": "CS601",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Sudeep Sharma",
+    "subjectCode": "ECE602",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Ritesh Kumar",
+    "subjectCode": "CS601",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Archana Balmik",
+    "subjectCode": "CS602",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Nancy Sukhadia",
+    "subjectCode": "CS603",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Nishad Deshpande",
+    "subjectCode": "ECE602",
+    "batchCode": "UI22ECE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Reema Patel",
+    "subjectCode": "CS604",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Archana Balmik",
+    "subjectCode": "CS602",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Sudeep Sharma",
+    "subjectCode": "CS601",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Ritesh Kumar",
+    "subjectCode": "CS601",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Dr. Kaustubh Dhondge",
+    "subjectCode": "CS605",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  },
+  {
+    "professorName": "Nancy Sukhadia",
+    "subjectCode": "CS603",
+    "batchCode": "UI22CSE",
+    "semester": 6,
+    "year": "2025"
+  }
+]

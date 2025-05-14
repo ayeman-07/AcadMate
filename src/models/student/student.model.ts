@@ -8,6 +8,7 @@ export interface IStudent extends Document {
   name: string;
   roll: string;
   password: string;
+  batchCode: string;
   branch: Branch;
   section: Section;
   currSem: number;
@@ -32,6 +33,12 @@ const studentSchema = new Schema<IStudent>(
       type: String,
       required: [true, "Roll number is required"],
       unique: true,
+      trim: true,
+      uppercase: true,
+    },
+    batchCode: {
+      type: String,
+      required: [true, "Batch code is required"],
       trim: true,
       uppercase: true,
     },

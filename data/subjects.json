@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Digital VLSI Design",
+    "code": "ECE601",
+    "credits": 4,
+    "isElective": false,
+    "isPractical": false
+  },
+  {
+    "name": "Machine Learning",
+    "code": "CS601",
+    "credits": 4,
+    "isElective": false,
+    "isPractical": false
+  },
+  {
+    "name": "Sensor and Instrumentation",
+    "code": "ECE602",
+    "credits": 4,
+    "isElective": false,
+    "isPractical": false
+  },
+  {
+    "name": "Web Engineering",
+    "code": "CS602",
+    "credits": 3,
+    "isElective": false,
+    "isPractical": false
+  },
+  {
+    "name": "AVR",
+    "code": "CS603",
+    "credits": 2,
+    "isElective": false,
+    "isPractical": true
+  },
+  {
+    "name": "Information Security",
+    "code": "CS604",
+    "credits": 3,
+    "isElective": false,
+    "isPractical": false
+  },
+  {
+    "name": "Data Mining and Data Warehousing",
+    "code": "CS605",
+    "credits": 3,
+    "isElective": false,
+    "isPractical": false
+  }
+]
