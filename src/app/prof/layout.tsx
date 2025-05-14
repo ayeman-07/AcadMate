@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/professor/dashboard", icon: Home },
-  { name: "Marks Entry", href: "/professor/marks", icon: BookOpen },
-  { name: "Results", href: "/professor/results", icon: BarChart2 },
-  { name: "Students", href: "/professor/students", icon: Users },
-  { name: "Settings", href: "/professor/settings", icon: Settings },
+  { name: "Dashboard", href: "/prof/dashboard", icon: Home },
+  { name: "Marks Entry", href: "/prof/marks/selection", icon: BookOpen },
+  { name: "Results", href: "/prof/results", icon: BarChart2 },
+  { name: "Students", href: "/prof/students", icon: Users },
+  { name: "Settings", href: "/prof/settings", icon: Settings },
 ];
 
 export default function ProfessorLayout({

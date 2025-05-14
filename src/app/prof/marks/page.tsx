@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
+import { BookOpen, FileText } from "lucide-react";
 import { ExamSelector, ExamType } from "@/components/professor/ExamSelector";
 import { StudentMarksTable } from "@/components/professor/StudentMarksTable";
 
-// Hardcoded data for demonstration
+// Sample Data
 const sections = [
   { id: "1", name: "Section A", semester: 3, department: "CSE" },
   { id: "2", name: "Section B", semester: 3, department: "CSE" },
@@ -30,14 +30,33 @@ const students = [
     semester: 3,
     department: "CSE",
   },
-  // Add more students as needed
 ];
+
+// Subject mapping per semester/department
+const subjectsPerSection: Record<string, string[]> = {
+  "CSE-3": ["Data Structures", "Mathematics III", "Digital Logic"],
+  "CSE-5": ["DBMS", "Operating Systems", "Computer Networks"],
+  "ECE-5": ["Signals & Systems", "Analog Electronics", "Electromagnetics"],
+};
 
 export default function MarksEntry() {
   const [selectedSection, setSelectedSection] = useState(sections[0].id);
   const [selectedExam, setSelectedExam] = useState<ExamType>("quiz1");
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [subjectOptions, setSubjectOptions] = useState<string[]>([]);
   const [studentMarks, setStudentMarks] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Update subject list based on selected section
+  useEffect(() => {
+    const sectionObj = sections.find((s) => s.id === selectedSection);
+    if (sectionObj) {
+      const key = `${sectionObj.department}-${sectionObj.semester}`;
+      const subjects = subjectsPerSection[key] || [];
+      setSubjectOptions(subjects);
+      setSelectedSubject(subjects[0] || "");
+    }
+  }, [selectedSection]);
 
   const handleMarkChange = (studentId: string, marks: number) => {
     setStudentMarks((prev) => ({
@@ -47,20 +66,24 @@ export default function MarksEntry() {
   };
 
   const handleSubmitMarks = async () => {
+    if (!selectedSubject) {
+      alert("Please select a subject before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Here you would typically make an API call to save the marks
       console.log("Submitting marks:", {
         examType: selectedExam,
         sectionId: selectedSection,
+        subject: selectedSubject,
         marks: studentMarks,
       });
-      
-      // Simulate API call
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       alert("Marks submitted successfully!");
-      setStudentMarks({}); // Clear marks after successful submission
+      setStudentMarks({});
     } catch (error) {
       console.error("Error submitting marks:", error);
       alert("Failed to submit marks. Please try again.");
@@ -81,6 +104,7 @@ export default function MarksEntry() {
         className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+          {/* Section Dropdown */}
           <div className="relative w-full md:w-64">
             <select
               value={selectedSection}
@@ -99,6 +123,28 @@ export default function MarksEntry() {
             </select>
             <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
+
+          {/* Subject Dropdown */}
+          <div className="relative w-full md:w-64">
+            <select
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 text-white bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-200 appearance-none cursor-pointer hover:bg-black/40"
+            >
+              {subjectOptions.map((subj) => (
+                <option
+                  key={subj}
+                  value={subj}
+                  className="bg-black/80 text-white hover:bg-indigo-600"
+                >
+                  {subj}
+                </option>
+              ))}
+            </select>
+            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          </div>
+
+          {/* Exam Dropdown */}
           <ExamSelector
             selectedExam={selectedExam}
             onExamChange={setSelectedExam}
@@ -133,4 +179,4 @@ export default function MarksEntry() {
       </motion.div>
     </div>
   );
-} 
+}
