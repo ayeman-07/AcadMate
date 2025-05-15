@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, models } from "mongoose";
 
 interface ISubject extends Document {
   name: string;
@@ -19,4 +19,4 @@ const SubjectSchema = new Schema<ISubject>(
   { timestamps: true }
 );
 
-export default mongoose.model<ISubject>("Subject", SubjectSchema);
+export default models.Subject || mongoose.model<ISubject>("Subject", SubjectSchema);

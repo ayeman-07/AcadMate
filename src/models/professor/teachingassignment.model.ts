@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document, Types, models } from "mongoose";
 
 export interface ITeachingAssignment extends Document {
   professor: Types.ObjectId; 
@@ -44,7 +44,7 @@ TeachingAssignmentSchema.index(
   { unique: true }
 );
 
-export default model<ITeachingAssignment>(
+export default models.TeachingAssignment || model<ITeachingAssignment>(
   "TeachingAssignment",
   TeachingAssignmentSchema
 );
