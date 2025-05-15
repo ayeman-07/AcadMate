@@ -6,26 +6,30 @@ import TeachingAssignment from "@/models/professor/teachingassignment.model";
 import Professor from "@/models/professor/professor.model";
 import Subject from "@/models/exams/subject.model";
 
+// Log the models to ensure they are registered
+console.log("Professor model loaded:", Professor);
+console.log("Subject model loaded:", Subject);
+
 export async function GET(req: NextRequest) {
   try {
     await connectToDB();
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    if (!token || !token.id) {
+    if (!token || !token.sub) {
       return NextResponse.json(
         { message: "Unauthorized or invalid token" },
         { status: 401 }
       );
     }
 
-    const professorId = token.id;
+    const professorId = token.sub;
 
     const assignments = await TeachingAssignment.find({
       professor: professorId,
     })
       .populate("professor", "name email")
-      .populate("subject", "subjectCode subjectName")
+      .populate("subject", "code name")
       .lean();
 
     if (!assignments.length) {
