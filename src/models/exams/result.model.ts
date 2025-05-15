@@ -1,11 +1,12 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, models } from "mongoose";
 
 interface IResult extends Document {
   student: mongoose.Types.ObjectId;
   exam: string;
   subject: mongoose.Types.ObjectId;
   marksObtained: number;
-  evaluator: mongoose.Types.ObjectId; 
+  sem: string;
+  batchCode: string; 
 }
 
 const ResultSchema = new Schema<IResult>(
@@ -14,8 +15,10 @@ const ResultSchema = new Schema<IResult>(
     exam: { type: String, required: true },
     subject: { type: Schema.Types.ObjectId, ref: "Subject", required: true },
     marksObtained: { type: Number, required: true },
+    sem: { type: String, required: true}, 
+    batchCode: { type: String, required: true }, 
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IResult>("Result", ResultSchema);
+export default models.Result || mongoose.model<IResult>("Result", ResultSchema);
