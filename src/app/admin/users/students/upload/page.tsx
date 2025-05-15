@@ -20,13 +20,15 @@ export default function StudentExcelUpload() {
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
     const parsedStudents = (jsonData as any[]).map((row, index) => {
-      const roll: string = row["Enrollment No."]
-        ?.toString()
-        .trim()
-        .toUpperCase();
-      const name: string = row["Name"]?.toString().trim();
+      const roll: string =
+        row["Enrollment Number"]?.toString().trim().toUpperCase() ||
+        row["Enrollment No."]?.toString().trim().toUpperCase();
+      const name: string =
+        row["Name"]?.toString().trim() ||
+        `${row["First Name"] || ""} ${row["Last Name"] || ""}`.trim();
       const email: string = row["Email"]?.toString().trim();
-      const password: string = row["Password"]?.toString();
+      const password: string =
+        row["Password"]?.toString().trim() || roll?.toLowerCase();
       const batchCode = roll.substring(0, 6);
       const branchCode = roll.substring(4, 6);
       const branch = branchCode === "CS" ? "CS" : "EC";

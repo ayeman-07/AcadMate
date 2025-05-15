@@ -22,10 +22,6 @@ const ExamSchema = new Schema<IExam>(
     maxMarks: { type: Number, required: true },
     examDate: { type: Date, required: true },
     duration: { type: String, required: true },
-    paperSetter: {
-      type: Schema.Types.ObjectId,
-      ref: "Professor",
-    },
   },
   { timestamps: true }
 );
