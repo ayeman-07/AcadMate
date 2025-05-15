@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import GlassBackground from "@/components/ui/GlassBackground";
+import LogoutButton from "@/components/Logout";
 
 export default function AdminLayout({
   children,
@@ -28,6 +29,7 @@ export default function AdminLayout({
 
   return (
     <>
+      
       <GlassBackground />
       <div className="min-h-screen bg-black/50 backdrop-blur-sm">
         {!isSidebarOpen && (
@@ -63,6 +65,7 @@ export default function AdminLayout({
         >
           <div className="p-4 sm:p-6 lg:p-8 pt-20">{children}</div>
         </main>
+        <LogoutButton />
       </div>
     </>
   );

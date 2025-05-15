@@ -142,7 +142,7 @@ export default function AdminPage() {
         transition={{ duration: 0.5 }}
         className="flex flex-col items-end w-full"
       >
-        <div className="text-right max-w-2xl">
+        <div className=" max-w-2xl">
           <h1 className="text-3xl font-bold text-white mb-2 font-montserrat tracking-tight">
             Dashboard Overview
           </h1>

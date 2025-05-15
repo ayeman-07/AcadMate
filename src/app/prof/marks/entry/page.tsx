@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import toast from 'react-hot-toast';
 
 interface Student {
   _id: string;
@@ -108,7 +109,7 @@ export default function MarksEntryPage() {
     }));
 
     if (allEntries.length === 0) {
-      alert("No students found.");
+      toast("No students found.", { icon: "⚠️" });
       return;
     }
 
@@ -129,7 +130,8 @@ export default function MarksEntryPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Marks submitted successfully");
+        toast.success("Marks submitted successfully");
+
 
         // Update originalMarks and reset all isUpdated flags to false after submit
         setOriginalMarks({ ...marks });
@@ -140,11 +142,13 @@ export default function MarksEntryPage() {
         setIsUpdatedFlags(resetFlags);
       } else {
         console.error(data.error);
-        alert("Failed to save marks");
+        toast.error("Failed to save marks");
+
       }
     } catch (error) {
       console.error("Error saving marks:", error);
-      alert("Something went wrong.");
+      toast.error("Something went wrong.");
+
     }
   };
 
