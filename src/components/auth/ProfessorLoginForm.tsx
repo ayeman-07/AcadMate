@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormInput } from "@/components/ui/FormInput";
 import { Mail, Lock, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 
 export default function ProfessorLoginForm() {
   const router = useRouter();
@@ -20,31 +21,19 @@ export default function ProfessorLoginForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    try {
-      const response = await fetch("/api/auth/professor/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+      role: "professor",
+    });
 
-      const data = await response.json();
+    setIsLoading(false);
 
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
-      // Store professor data in localStorage
-      localStorage.setItem("professor", JSON.stringify(data.professor));
-      
-      // Redirect to professor dashboard
-      router.push("/professor/dashboard");
-    } catch (error) {
-      console.error("Login error:", error);
-      setError(error instanceof Error ? error.message : "Invalid credentials. Please try again.");
-    } finally {
-      setIsLoading(false);
+    if (res?.error) {
+      setError(res.error);
+    } else {
+      router.push("/prof/dashboard");
     }
   }
 

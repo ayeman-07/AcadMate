@@ -54,9 +54,27 @@ const authOptions: NextAuthOptions = {
               );
               break;
             case "professor":
+            case "professor":
+              if (!email) throw new Error("Email is required");
+
+              user = await Professor.findOne({
+                email: email.toLowerCase(),
+              }).select("+password");
+              if (!user || !user.password)
+                throw new Error("Invalid credentials");
+
+              const isPasswordValid = await user.comparePassword(password);
+              if (!isPasswordValid) throw new Error("Invalid credentials");
+
+              return {
+                id: user._id.toString(),
+                role,
+                name: user.name,
+                email: user.email,
+              };
             case "admin":
               if (!email) throw new Error("Email is required");
-              user = await (role === "professor" ? Professor : Admin)
+              user = await Admin
                 .findOne({
                   email: email.toLowerCase(),
                 })
@@ -82,8 +100,7 @@ const authOptions: NextAuthOptions = {
           }
 
           if (
-            !otp &&
-            (role === "professor" || role === "admin") &&
+            !otp  &&
             isPasswordValid
           ) {
             throw new Error("OTP required");
