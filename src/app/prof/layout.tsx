@@ -12,6 +12,7 @@ import {
   LogOut,
   Home,
 } from "lucide-react";
+import LogoutButton from "@/components/Logout";
 
 const navigation = [
   { name: "Dashboard", href: "/prof/dashboard", icon: Home },
@@ -30,6 +31,8 @@ export default function ProfessorLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <LogoutButton /> 
+
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className="w-64 bg-black/30 backdrop-blur-lg border-r border-white/10 p-4">
