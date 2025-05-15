@@ -11,6 +11,7 @@ interface QueryParams {
     name?: { $regex: string; $options: string };
     roll?: { $regex: string; $options: string };
   }>;
+  branch?: string;
 }
 
 export async function POST(req: Request) {

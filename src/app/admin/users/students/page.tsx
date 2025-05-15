@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Student {
   _id: string;
@@ -35,6 +36,7 @@ export default function StudentManagement() {
     semester: "",
     section: "",
   });
+  const router = useRouter();
 
   const branches = ["CSE", "ECE", "ME", "CE", "IT", "EE"];
   const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"];
@@ -179,6 +181,15 @@ export default function StudentManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Student Management</h1>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => router.push("/admin/users/students/upload")}
+          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+        >
+          <Plus className="w-5 h-5" />
+          <p>Add Students ( using excel sheet )</p>
+        </motion.button>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
