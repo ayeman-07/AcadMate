@@ -245,7 +245,7 @@ export default function ResultsPage() {
         <h1 className="text-2xl font-bold">Results</h1>
         <div className="relative w-56 z-10">
           <select
-            className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+            className="bg-gray-900 text-white border border-gray-700 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full cursor-pointer hover:bg-gray-800"
             value={selectedSemester}
             onChange={(e) => setSelectedSemester(Number(e.target.value))}
           >
@@ -253,7 +253,7 @@ export default function ResultsPage() {
               <option
                 key={idx}
                 value={idx + 1}
-                className="bg-gray-800 text-white"
+                className="bg-gray-900 text-white"
               >
                 {sem}
               </option>
