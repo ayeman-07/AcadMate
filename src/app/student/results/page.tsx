@@ -1,63 +1,73 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // <-- this way
+import autoTable from "jspdf-autotable";
+import axios from "axios";
+
+interface ResultEntry {
+  subject: {
+    name: string;
+    code: string;
+  };
+  exam: string;
+  marksObtained: number;
+}
 
 export default function ResultsPage() {
-  const semesters = [
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-    "Semester 5",
-    "Semester 6",
-    "Semester 7",
-    "Semester 8",
-  ];
-  const currentSemester = 5;
+  const semesters = Array.from({ length: 8 }, (_, i) => `Semester ${i + 1}`);
+  const currentSemester = 6;
   const [selectedSemester, setSelectedSemester] = useState(currentSemester);
+  const [results, setResults] = useState<ResultEntry[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const resultsData: { [key: number]: { subject: string; quiz1: string; midsem: string; quiz2: string; endsem: string; }[] } = {
-    5: [
-      { subject: "Operating Systems", quiz1: "27/30", midsem: "42/50", quiz2: "26/30", endsem: "Pending" },
-      { subject: "Computer Networks", quiz1: "28/30", midsem: "44/50", quiz2: "29/30", endsem: "Pending" },
-      { subject: "Database Systems", quiz1: "26/30", midsem: "41/50", quiz2: "27/30", endsem: "Pending" },
-      { subject: "Software Engineering", quiz1: "25/30", midsem: "39/50", quiz2: "Pending", endsem: "Pending" },
-    ],
-    4: [
-      { subject: "Data Structures", quiz1: "26/30", midsem: "43/50", quiz2: "27/30", endsem: "81/100" },
-      { subject: "Discrete Mathematics", quiz1: "24/30", midsem: "42/50", quiz2: "25/30", endsem: "79/100" },
-    ],
-    3: [
-      { subject: "Digital Logic Design", quiz1: "23/30", midsem: "40/50", quiz2: "24/30", endsem: "77/100" },
-      { subject: "Object Oriented Programming", quiz1: "27/30", midsem: "45/50", quiz2: "28/30", endsem: "85/100" },
-    ],
+  const groupedResults: { [subjectName: string]: { [exam: string]: number } } =
+    {};
+  results.forEach((entry) => {
+    const subjectName = entry.subject.name;
+    if (!groupedResults[subjectName]) {
+      groupedResults[subjectName] = {};
+    }
+    groupedResults[subjectName][entry.exam] = entry.marksObtained;
+  });
+
+  const fetchResults = async (sem: number) => {
+    try {
+      setLoading(true);
+      const res = await axios.post("/api/result/student", { sem });
+      setResults(res.data.results);
+    } catch (error) {
+      console.error("Failed to fetch results:", error);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const subjects = resultsData[selectedSemester] || [];
+  useEffect(() => {
+    fetchResults(selectedSemester);
+  }, [selectedSemester]);
 
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
     pdf.setFontSize(18);
     pdf.text(`Results - ${semesters[selectedSemester - 1]}`, 20, 30);
-  
+
     const tableColumn = ["Subject", "Quiz 1", "Midsem", "Quiz 2", "Endsem"];
     const tableRows: any[] = [];
-  
-    subjects.forEach((subject) => {
-      const subjectData = [
-        subject.subject,
-        subject.quiz1,
-        subject.midsem,
-        subject.quiz2,
-        subject.endsem,
-      ];
-      tableRows.push(subjectData);
+
+    Object.entries(groupedResults).forEach(([subjectName, exams]) => {
+      tableRows.push([
+        subjectName,
+        exams["quiz1"] ?? "Pending",
+        exams["midsem"] ?? "Pending",
+        exams["quiz2"] ?? "Pending",
+        exams["endsem"] ?? "Pending",
+      ]);
     });
-  
-    autoTable(pdf, {  // <-- call autoTable like this
+
+    autoTable(pdf, {
       head: [tableColumn],
       body: tableRows,
       startY: 50,
@@ -73,14 +83,12 @@ export default function ResultsPage() {
         halign: "center",
       },
     });
-  
+
     pdf.save(`results_semester_${selectedSemester}.pdf`);
   };
-  
 
   return (
     <div className="space-y-6">
-      {/* Header with Dropdown */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Results</h1>
         <div className="relative inline-block text-left">
@@ -90,7 +98,11 @@ export default function ResultsPage() {
             onChange={(e) => setSelectedSemester(Number(e.target.value))}
           >
             {semesters.map((sem, idx) => (
-              <option key={idx} value={idx + 1} className="bg-gray-800 text-white">
+              <option
+                key={idx}
+                value={idx + 1}
+                className="bg-gray-800 text-white"
+              >
                 {sem}
               </option>
             ))}
@@ -99,7 +111,6 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* Results Table */}
       <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
@@ -112,19 +123,26 @@ export default function ResultsPage() {
             </tr>
           </thead>
           <tbody>
-            {subjects.map((subject, idx) => (
+            {Object.entries(groupedResults).map(([subjectName, exams], idx) => (
               <tr key={idx} className="border-t border-white/10">
-                <td className="py-3 px-4 font-semibold">{subject.subject}</td>
-                <td className="py-3 px-4">{subject.quiz1}</td>
-                <td className="py-3 px-4">{subject.midsem}</td>
-                <td className="py-3 px-4">{subject.quiz2}</td>
-                <td className="py-3 px-4">{subject.endsem}</td>
+                <td className="py-3 px-4 font-semibold">{subjectName}</td>
+                <td className="py-3 px-4">{exams["quiz1"] ?? "Pending"}</td>
+                <td className="py-3 px-4">{exams["midsem"] ?? "Pending"}</td>
+                <td className="py-3 px-4">{exams["quiz2"] ?? "Pending"}</td>
+                <td className="py-3 px-4">{exams["endsem"] ?? "Pending"}</td>
               </tr>
             ))}
-            {subjects.length === 0 && (
+            {!Object.keys(groupedResults).length && !loading && (
               <tr>
                 <td colSpan={5} className="text-center py-6 text-gray-400">
                   No results available for this semester.
+                </td>
+              </tr>
+            )}
+            {loading && (
+              <tr>
+                <td colSpan={5} className="text-center py-6 text-gray-400">
+                  Loading...
                 </td>
               </tr>
             )}
@@ -132,7 +150,6 @@ export default function ResultsPage() {
         </table>
       </div>
 
-      {/* Download PDF Button */}
       <div className="flex justify-end">
         <button
           onClick={handleDownloadPDF}
