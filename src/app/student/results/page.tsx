@@ -16,6 +16,8 @@ interface SubjectResult {
 
 interface MappedSubject {
   subject: string;
+  code: string;
+  credits: number;
   quiz1?: string;
   midsem?: string;
   quiz2?: string;
@@ -24,6 +26,7 @@ interface MappedSubject {
   grade: string;
   [key: string]: string | number | undefined;
 }
+
 export default function ResultsPage() {
   const semesters = [
     "Semester 1",
@@ -40,6 +43,8 @@ export default function ResultsPage() {
   const [selectedSemester, setSelectedSemester] = useState(currentSemester);
   const [results, setResults] = useState<MappedSubject[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sgpa, setSGPA] = useState<number | null>(null);
+
 
   const fetchResults = async (sem: number) => {
     try {
@@ -53,31 +58,48 @@ export default function ResultsPage() {
       });
 
       const data = await res.json();
+      const gradeMap: Record<string, number> = {
+        AA: 10,
+        AB: 9,
+        BB: 8,
+        BC: 7,
+        CC: 6,
+        CD: 5,
+        DD: 4,
+        FF: 0,
+      };
+      
 
       const grouped: { [subjectName: string]: MappedSubject } = {};
 
       for (const result of data.results) {
-        const subjectName = result.subject.name;
+        const subjectKey = result.subject.code;
 
-        if (!grouped[subjectName]) {
-          grouped[subjectName] = {
-            subject: subjectName,
+        if (!grouped[subjectKey]) {
+          grouped[subjectKey] = {
+            subject: result.subject.name,
             quiz1: "0",
             midsem: "0",
             quiz2: "0",
             endsem: "0",
             total: 0,
             grade: "Pending",
+            credits: result.subject.credits,
+            code: result.subject.code,
           };
         }
 
         const examKey = result.exam as keyof MappedSubject;
         if (["quiz1", "midsem", "quiz2", "endsem"].includes(result.exam)) {
-          grouped[subjectName][examKey] = String(result.marksObtained);
+          grouped[subjectKey][examKey] = String(result.marksObtained);
+
         }
       }
 
       // After populating all exam marks, calculate total + grade
+      let totalWeightedCredits = 0;
+      let totalCredits = 0;
+
       const calculatedResults = Object.values(grouped).map((subj) => {
         const quiz1 = parseFloat(subj.quiz1 ?? "0");
         const quiz2 = parseFloat(subj.quiz2 ?? "0");
@@ -97,10 +119,20 @@ export default function ResultsPage() {
         else if (total >= 42) grade = "CD";
         else if (total >= 36) grade = "DD";
 
+        const gradeValue = gradeMap[grade] ?? 0;
+        totalWeightedCredits += gradeValue * subj.credits;
+        totalCredits += subj.credits;
+
         return { ...subj, total: Math.round(total), grade };
       });
 
       setResults(calculatedResults);
+      setSGPA(
+        totalCredits > 0
+          ? parseFloat((totalWeightedCredits / totalCredits).toFixed(2))
+          : null
+      );
+
     } catch (err) {
       console.error("Failed to fetch results:", err);
       setResults([]);
@@ -152,6 +184,7 @@ export default function ResultsPage() {
         halign: "center",
       },
     });
+    pdf.text(`SGPA: ${sgpa ?? "N/A"}`, 20, 45);
 
     pdf.save(`results_semester_${selectedSemester}.pdf`);
   };
@@ -234,49 +267,67 @@ export default function ResultsPage() {
         {loading ? (
           <p className="text-white/70 text-center py-10">Loading results...</p>
         ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-gray-400">
-                <th className="py-2 px-4">Subject</th>
-                <th className="py-2 px-4">Quiz 1</th>
-                <th className="py-2 px-4">Midsem</th>
-                <th className="py-2 px-4">Quiz 2</th>
-                <th className="py-2 px-4">Endsem</th>
-                <th className="py-2 px-4">Total</th>
-                <th className="py-2 px-4">Grade</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.length > 0 ? (
-                results.map((subject, idx) => (
-                  <tr
-                    key={idx}
-                    className={`border-t border-white/10 ${getGradeRowBgColor(
-                      subject.grade
-                    )}`}
-                  >
-                    <td className="py-3 px-4 font-semibold">
-                      {subject.subject}
-                    </td>
-                    <td className="py-3 px-4">{subject.quiz1 ?? "Pending"}</td>
-                    <td className="py-3 px-4">{subject.midsem ?? "Pending"}</td>
-                    <td className="py-3 px-4">{subject.quiz2 ?? "Pending"}</td>
-                    <td className="py-3 px-4">{subject.endsem ?? "Pending"}</td>
-                    <td className="py-3 px-4">{subject.total}</td>
-                    <td className={`py-3 px-4 ${getGradeColor(subject.grade)}`}>
-                      {subject.grade}
+          <>
+            {sgpa !== null && (
+              <div className="text-lg text-white font-semibold">
+                SGPA: <span className="text-indigo-400">{sgpa}</span>
+              </div>
+            )}
+
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-gray-400">
+                  <th className="py-2 px-4">Subject</th>
+                  <th className="py-2 px-4">Quiz 1</th>
+                  <th className="py-2 px-4">Midsem</th>
+                  <th className="py-2 px-4">Quiz 2</th>
+                  <th className="py-2 px-4">Endsem</th>
+                  <th className="py-2 px-4">Total</th>
+                  <th className="py-2 px-4">Grade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.length > 0 ? (
+                  results.map((subject, idx) => (
+                    <tr
+                      key={idx}
+                      className={`border-t border-white/10 ${getGradeRowBgColor(
+                        subject.grade
+                      )}`}
+                    >
+                      <td className="py-3 px-4 font-semibold">
+                        {subject.subject}
+                      </td>
+                      <td className="py-3 px-4">
+                        {subject.quiz1 ?? "Pending"}
+                      </td>
+                      <td className="py-3 px-4">
+                        {subject.midsem ?? "Pending"}
+                      </td>
+                      <td className="py-3 px-4">
+                        {subject.quiz2 ?? "Pending"}
+                      </td>
+                      <td className="py-3 px-4">
+                        {subject.endsem ?? "Pending"}
+                      </td>
+                      <td className="py-3 px-4">{subject.total}</td>
+                      <td
+                        className={`py-3 px-4 ${getGradeColor(subject.grade)}`}
+                      >
+                        {subject.grade}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="text-center py-6 text-gray-400">
+                      No results available for this semester.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="text-center py-6 text-gray-400">
-                    No results available for this semester.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
 
