@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const anyResultExists = await Result.exists({ exam, sem, batchCode });
+    const anyResultExists = await Result.exists({ exam, sem, batchCode  , subject: subjectId });
 
     if (!anyResultExists) {
       // First time insert: Insert all entries, with isUpdated = false
