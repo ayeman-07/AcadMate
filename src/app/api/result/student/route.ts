@@ -13,34 +13,38 @@ export async function POST(req: NextRequest) {
   try {
 
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.id) {
+    console.log("Session:", session);   
+    if (!session || !session.user?.name) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const studentId = session.user.id;
+    const studentName = session.user.roll;
+    
     await connectToDB();
 
     const { sem } = await req.json();
 
 
-    if (!sem || !studentId) {
+    if (!sem || !studentName) {
       return NextResponse.json(
         { error: "Semester and studentId are required" },
         { status: 400 }
       );
     }
 
-    const student = await Student.findById(studentId);
+    const student = await Student.findOne( {roll : studentName}  );
     if (!student)
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
 
     const batchCode = student.batchCode;
 
     // Fetch results
-    const results = await Result.find({ student: studentId, sem }).populate(
+    const results = await Result.find({ student: student._id, sem }).populate(
       "subject"
     );
 
+
+    console.log("Results:", results);
     return NextResponse.json(
       { results, student, batchCode },
       { status: 200 }
