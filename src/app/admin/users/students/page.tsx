@@ -38,7 +38,7 @@ export default function StudentManagement() {
   });
   const router = useRouter();
 
-  const branches = ["CSE", "ECE", "ME", "CE", "IT", "EE"];
+  const branches = ["CS", "EC"];
   const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"];
   const sections = ["1", "2"];
 

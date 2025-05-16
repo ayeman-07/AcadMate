@@ -52,7 +52,7 @@ export default function SubjectSelectionPage() {
       batchCode: assignment.batchCode,
     });
 
-    router.push(`/prof/marks/entry?${queryParams.toString()}`);
+    router.push(`/prof/results/view-results?`);
   };
 
   if (loading)

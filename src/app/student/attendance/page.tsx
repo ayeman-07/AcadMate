@@ -4,42 +4,41 @@ import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 export default function AttendancePage() {
-  const semesters = [
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-    "Semester 5",
-    "Semester 6",
-    "Semester 7",
-    "Semester 8",
-  ];
-  const [selectedSem, setSelectedSem] = useState("Semester 5");
+  const currentSem = 5;
+  const semesters = Array.from({ length: currentSem }, (_, i) => `Semester ${i + 1}`);
+  const [selectedSem, setSelectedSem] = useState(`Semester ${currentSem}`);
 
   const attendanceData = [
     {
-      subject: "Mathematics",
+      subject: "Digital VLSI Design",
       totalTheory: 40,
       attendedTheory: 30,
       totalPractical: 10,
       attendedPractical: 8,
     },
     {
-      subject: "Physics",
+      subject: "Web Engineering",
       totalTheory: 38,
       attendedTheory: 27,
       totalPractical: 12,
       attendedPractical: 9,
     },
     {
-      subject: "Chemistry",
+      subject: "AVR",
       totalTheory: 36,
       attendedTheory: 34,
       totalPractical: 14,
       attendedPractical: 13,
     },
     {
-      subject: "Computer Science",
+      subject: "Sensor and Instrumentation",
+      totalTheory: 42,
+      attendedTheory: 40,
+      totalPractical: 16,
+      attendedPractical: 16,
+    },
+    {
+      subject: "Mini Project",
       totalTheory: 42,
       attendedTheory: 40,
       totalPractical: 16,
@@ -52,23 +51,23 @@ export default function AttendancePage() {
 
   return (
     <div className="space-y-6">
-      {/* Top Bar with Dropdown */}
-      <div className="flex justify-end">
-  <div className="relative inline-block text-left">
-    <select
-      value={selectedSem}
-      onChange={(e) => setSelectedSem(e.target.value)}
-      className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    >
-      {semesters.map((sem) => (
-        <option key={sem} value={sem} className="bg-gray-800 text-white">
-          {sem}
-        </option>
-      ))}
-    </select>
-    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-  </div>
-</div>
+      {/* Dropdown moved to left */}
+      <div className="flex justify-start">
+        <div className="relative inline-block text-left">
+          <select
+            value={selectedSem}
+            onChange={(e) => setSelectedSem(e.target.value)}
+            className="bg-gray-800 text-white border border-white/20 rounded-lg p-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {semesters.map((sem) => (
+              <option key={sem} value={sem} className="bg-gray-800 text-white">
+                {sem}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+      </div>
 
       {/* Attendance Table */}
       <div className="overflow-x-auto">
@@ -96,8 +95,8 @@ export default function AttendancePage() {
                 subject.totalPractical
               );
               const overallPercent = Math.round(
-                (subject.attendedTheory + subject.attendedPractical) /
-                  (subject.totalTheory + subject.totalPractical) *
+                ((subject.attendedTheory + subject.attendedPractical) /
+                  (subject.totalTheory + subject.totalPractical)) *
                   100
               );
 
@@ -109,7 +108,7 @@ export default function AttendancePage() {
                   className={`border-b border-white/10 ${
                     isLowAttendance
                       ? "border-l-4 border-l-red-500 bg-red-500/10"
-                      : ""
+                      : "bg-white/5"
                   }`}
                 >
                   <td className="px-6 py-4 font-medium">{subject.subject}</td>
