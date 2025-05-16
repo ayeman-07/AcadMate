@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import LogoutButton from "@/components/Logout";
 import {
   FileBarChart2,
   CalendarCheck,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 const navigation = [
+  { name: "Dashboard", href: "/student/dashboard", icon: FileBarChart2 },
   { name: "Results", href: "/student/results", icon: FileBarChart2 },
   { name: "Attendance", href: "/student/attendance", icon: CalendarCheck },
   { name: "Assignments", href: "/student/assignments", icon: FileText },
@@ -58,24 +60,14 @@ export default function StudentLayout({
             })}
           </nav>
 
-          {/* Logout button */}
-          <div className="mt-auto pt-8">
-            <Link href="/auth/student/login">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-white/5 rounded-lg transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </motion.div>
-            </Link>
-          </div>
+
         </div>
 
         {/* Main content */}
         <div className="flex-1 overflow-y-auto p-6">{children}</div>
       </div>
+
+      <LogoutButton />
     </div>
   );
 }

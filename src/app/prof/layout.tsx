@@ -17,7 +17,7 @@ import LogoutButton from "@/components/Logout";
 const navigation = [
   { name: "Dashboard", href: "/prof/dashboard", icon: Home },
   { name: "Marks Entry", href: "/prof/marks/selection", icon: BookOpen },
-  { name: "Results", href: "/prof/results", icon: BarChart2 },
+  { name: "Results", href: "/prof/results/selection", icon: BarChart2 },
   { name: "Students", href: "/prof/students", icon: Users },
   { name: "Settings", href: "/prof/settings", icon: Settings },
 ];
@@ -60,18 +60,7 @@ export default function ProfessorLayout({
               );
             })}
           </nav>
-          <div className="mt-auto pt-8">
-            <Link href="/auth/professor/login">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-white/5 rounded-lg transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </motion.div>
-            </Link>
-          </div>
+          
         </div>
 
         {/* Main content */}
