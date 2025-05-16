@@ -16,6 +16,21 @@ interface Student {
   section: string;
   createdAt: string;
 }
+// 1. Update the Student interface
+interface Student {
+  _id: string;
+  name: string;
+  email: string;
+  roll: string;
+  branch: string;
+  semester: string; // keep for form compatibility
+  section: string;
+  createdAt: string;
+  currSem?: string; // <-- add this
+}
+
+// 2. In the table, use currSem if present
+
 
 export default function StudentManagement() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -178,7 +193,7 @@ export default function StudentManagement() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Student Management</h1>
         <motion.button
@@ -268,7 +283,7 @@ export default function StudentManagement() {
                 <td className="px-6 py-4">{student.name}</td>
                 <td className="px-6 py-4">{student.roll}</td>
                 <td className="px-6 py-4">{student.branch}</td>
-                <td className="px-6 py-4">{student.semester}</td>
+                <td className="px-6 py-4">{student.currSem}</td>
                 <td className="px-6 py-4">{student.section}</td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
@@ -315,11 +330,11 @@ export default function StudentManagement() {
       </div>
 
       {isFormOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 overflow-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-950 p-8 rounded-xl w-full max-w-md space-y-6 border border-white/10 shadow-2xl"
+            className="bg-gray-950 p-8 rounded-xl w-full max-w-md space-y-6 border border-white/10 shadow-2xl overflow-auto"
           >
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-white">
