@@ -10,28 +10,35 @@ export default function AttendancePage() {
 
   const attendanceData = [
     {
-      subject: "Mathematics",
+      subject: "Digital VLSI Design",
       totalTheory: 40,
       attendedTheory: 30,
       totalPractical: 10,
       attendedPractical: 8,
     },
     {
-      subject: "Physics",
+      subject: "Web Engineering",
       totalTheory: 38,
       attendedTheory: 27,
       totalPractical: 12,
       attendedPractical: 9,
     },
     {
-      subject: "Chemistry",
+      subject: "AVR",
       totalTheory: 36,
       attendedTheory: 34,
       totalPractical: 14,
       attendedPractical: 13,
     },
     {
-      subject: "Computer Science",
+      subject: "Sensor and Instrumentation",
+      totalTheory: 42,
+      attendedTheory: 40,
+      totalPractical: 16,
+      attendedPractical: 16,
+    },
+    {
+      subject: "Mini Project",
       totalTheory: 42,
       attendedTheory: 40,
       totalPractical: 16,
