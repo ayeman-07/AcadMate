@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import GlassBackground from "@/components/ui/GlassBackground";
 import LogoutButton from "@/components/Logout";
 
 export default function AdminLayout({
@@ -26,7 +25,6 @@ export default function AdminLayout({
 
   return (
     <>
-      <GlassBackground />
 
       <div className="min-h-screen bg-black/50 backdrop-blur-sm flex">
         {/* Sidebar */}
