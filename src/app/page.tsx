@@ -5,13 +5,12 @@ import { roles } from "@/constants/constants";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-8 py-10">
-      
-      
-      <div className="text-center mb-8 font-space-grotesk">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-medium text-slate-800 dark:text-slate-100 mb-6 font-montserrat tracking-tight">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl sm:text-5xl
+         md:text-6xl font-medium text-slate-800 dark:text-slate-100 mb-6 font-montserrat tracking-tight">
           Welcome to{" "}
-          <span className="text-indigo-600 dark:text-indigo-400 font-normal font-text-me-one">
-            acadMate
+          <span className="text-indigo-600 dark:text-indigo-400">
+            AcadMate
           </span>
         </h1>
       </div>
