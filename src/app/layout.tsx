@@ -52,7 +52,7 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             style: {
-              background: "#1f2937", // Tailwind's gray-900
+              background: "#1f2937",
               color: "#fff",
             },
           }}

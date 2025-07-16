@@ -1,505 +1,292 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import React, { useState, FC, Dispatch, SetStateAction } from "react";
+import { ChevronDown, Plus, ArrowUp, Trash2, X } from "lucide-react";
+import Link from "next/link";
 
-interface Student {
-  _id: string;
-  name: string;
-  email: string;
-  roll: string;
-  branch: string;
-  semester: string;
-  section: string;
-  createdAt: string;
-}
-// 1. Update the Student interface
-interface Student {
-  _id: string;
-  name: string;
-  email: string;
-  roll: string;
-  branch: string;
-  semester: string; // keep for form compatibility
-  section: string;
-  createdAt: string;
-  currSem?: string; // <-- add this
+// --- Type Definitions ---
+type Batches = {
+  [departmentName: string]: string[];
+};
+
+// --- Reusable Components ---
+
+interface NewSemesterModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddSemester: (semesterName: string) => boolean;
+  departmentName: string;
 }
 
-// 2. In the table, use currSem if present
+const NewSemesterModal: FC<NewSemesterModalProps> = ({
+  isOpen,
+  onClose,
+  onAddSemester,
+  departmentName,
+}) => {
+  const [semesterName, setSemesterName] = useState("");
+  const [error, setError] = useState("");
 
+  if (!isOpen) return null;
 
-export default function StudentManagement() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [branch, setBranch] = useState("");
-  const [semester, setSemester] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    roll: "",
-    branch: "",
-    semester: "",
-    section: "",
-  });
-  const router = useRouter();
-
-  const branches = ["CS", "EC"];
-  const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  const sections = ["1", "2"];
-
-  const fetchStudents = useCallback(async () => {
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        ...(branch && { branch }),
-        ...(semester && { semester }),
-        ...(search && { search }),
-      });
-
-      const response = await fetch(`/api/user-mgmt/student?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch students");
-
-      const data = await response.json();
-      setStudents(data.students);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to fetch students");
-    } finally {
-      setIsLoading(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!semesterName.trim()) {
+      setError("Semester name cannot be empty.");
+      return;
     }
-  }, [page, branch, semester, search]);
-
-  useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setIsLoading(true);
-
-      try {
-        const url = editingStudent
-          ? `/api/user-mgmt/student?id=${editingStudent._id}`
-          : "/api/user-mgmt/student";
-        const method = editingStudent ? "PUT" : "POST";
-
-        const response = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(error);
-        }
-
-        toast.success(
-          editingStudent
-            ? "Student updated successfully"
-            : "Student created successfully"
-        );
-        setIsFormOpen(false);
-        setEditingStudent(null);
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          roll: "",
-          branch: "",
-          semester: "",
-          section: "",
-        });
-        fetchStudents();
-      } catch (error) {
-        console.log(error);
-        toast.error(
-          error instanceof Error ? error.message : "Something went wrong"
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [editingStudent, formData, fetchStudents]
-  );
-
-  const handleDelete = useCallback(
-    async (id: string) => {
-      if (!confirm("Are you sure you want to delete this student?")) return;
-
-      try {
-        const response = await fetch(`/api/user-mgmt/student?id=${id}`, {
-          method: "DELETE",
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(error);
-        }
-
-        toast.success("Student deleted successfully");
-        fetchStudents();
-      } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : "Failed to delete student"
-        );
-      }
-    },
-    [fetchStudents]
-  );
-
-  const handleEdit = useCallback((student: Student) => {
-    setEditingStudent(student);
-    setFormData({
-      name: student.name,
-      email: student.email,
-      password: "", // Password is not included in the response
-      roll: student.roll,
-      branch: student.branch,
-      semester: student.semester,
-      section: student.section,
-    });
-    setIsFormOpen(true);
-  }, []);
-
-  const handleFormDataChange = useCallback((field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleCloseForm = useCallback(() => {
-    setIsFormOpen(false);
-    setEditingStudent(null);
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      roll: "",
-      branch: "",
-      semester: "",
-      section: "",
-    });
-  }, []);
+    const success = onAddSemester(semesterName.trim());
+    if (success) {
+      setSemesterName("");
+      setError("");
+      onClose();
+    } else {
+      setError(
+        `Semester "${semesterName.trim()}" already exists in this department.`
+      );
+    }
+  };
 
   return (
-    <div className="space-y-6 overflow-auto">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Student Management</h1>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => router.push("/admin/users/students/upload")}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          <p>Add Students ( using excel sheet )</p>
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setIsFormOpen(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          Add Student
-        </motion.button>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-zinc-900 rounded-xl shadow-2xl p-6 w-full max-w-md border border-zinc-700">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-zinc-100">
+            Add New Semester to {departmentName}
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full text-zinc-400 hover:bg-zinc-700 hover:text-white"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="semesterName"
+                className="block text-sm font-medium text-zinc-300 mb-1"
+              >
+                Semester Name
+              </label>
+              <input
+                type="text"
+                id="semesterName"
+                value={semesterName}
+                onChange={(e) => setSemesterName(e.target.value)}
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-md text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                placeholder="e.g., Sem 2"
+                autoFocus
+              />
+            </div>
+          </div>
+          {error && <p className="text-sm text-red-400 mt-3">{error}</p>}
+          <div className="mt-6 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-semibold text-zinc-300 bg-zinc-700 rounded-md hover:bg-zinc-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm font-semibold text-white bg-teal-800 rounded-md hover:bg-teal-700 transition-colors"
+            >
+              Add Semester
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
+  );
+};
 
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search by name or roll number..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+// ---
+
+interface SemesterCardProps {
+  department: string;
+  semester: string;
+  onPromote: (department: string, semester: string) => void;
+  onDelete: (department: string, semester: string) => void;
+}
+
+const SemesterCard: FC<SemesterCardProps> = ({
+  department,
+  semester,
+  onPromote,
+  onDelete,
+}) => (
+  <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 flex flex-col justify-between shadow-md hover:shadow-teal-900/20 hover:border-zinc-600 transition-all duration-300 cursor-pointer">
+    <Link href={`/admin/users/students/${department.toLowerCase()}/${semester.toLowerCase()}`} className="flex flex-col h-full">
+      <div>
+        <h3 className="text-lg font-bold text-zinc-100">{semester}</h3>
+        <p className="text-sm text-zinc-400">{department} Department</p>
+      </div>
+      <div className="mt-4 flex items-center gap-2">
+        <button
+          onClick={() => onPromote(department, semester)}
+          className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-teal-800 rounded-md hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 focus:ring-offset-zinc-950"
+        >
+          <ArrowUp className="w-4 h-4" />
+          Promote
+        </button>
+        <button
+          onClick={() => onDelete(department, semester)}
+          className="p-2 text-zinc-400 bg-zinc-700 rounded-md hover:bg-red-600 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-zinc-950"
+          aria-label={`Delete ${semester} from ${department}`}
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    </Link>
+  </div>
+);
+
+// ---
+
+interface DepartmentSectionProps {
+  title: string;
+  batches: Batches;
+  setBatches: Dispatch<SetStateAction<Batches>>;
+}
+
+const DepartmentSection: FC<DepartmentSectionProps> = ({
+  title,
+  batches,
+  setBatches,
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddSemester = (newSemesterName: string): boolean => {
+    const departmentSemesters = batches[title] || [];
+    if (
+      departmentSemesters
+        .map((s) => s.toLowerCase())
+        .includes(newSemesterName.toLowerCase())
+    ) {
+      return false; // Failure: semester already exists
+    }
+    setBatches((prev) => ({
+      ...prev,
+      [title]: [...departmentSemesters, newSemesterName],
+    }));
+    return true; // Success
+  };
+
+  const handleDeleteSemester = (
+    department: string,
+    semesterToDelete: string
+  ) => {
+    setBatches((prev) => ({
+      ...prev,
+      [department]: prev[department].filter((s) => s !== semesterToDelete),
+    }));
+  };
+
+  const handlePromoteSemester = (
+    department: string,
+    semesterToPromote: string
+  ) => {
+    // Placeholder for promotion logic
+    console.log(`Promoting ${semesterToPromote} in ${department}.`);
+  };
+
+  return (
+    <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl mb-6">
+      <NewSemesterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddSemester={handleAddSemester}
+        departmentName={title}
+      />
+      <div
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-zinc-800/60 rounded-t-xl transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <h2 className="text-xl font-bold text-zinc-100">{title}</h2>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-teal-800 rounded-md hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 focus:ring-offset-zinc-900"
+          >
+            <Plus className="w-4 h-4" />
+            Add Semester
+          </button>
+          <ChevronDown
+            className={`w-6 h-6 text-zinc-300 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : ""
+            }`}
           />
         </div>
-        <select
-          value={branch}
-          onChange={(e) => setBranch(e.target.value)}
-          className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-        >
-          <option value="">All Branches</option>
-          {branches.map((br) => (
-            <option key={br} value={br}>
-              {br}
-            </option>
-          ))}
-        </select>
-        <select
-          value={semester}
-          onChange={(e) => setSemester(e.target.value)}
-          className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-        >
-          <option value="">All Semesters</option>
-          {semesters.map((sem) => (
-            <option key={sem} value={sem}>
-              Semester {sem}
-            </option>
-          ))}
-        </select>
       </div>
-
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-white/10">
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Roll
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Branch
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Semester
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Section
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {students.map((student) => (
-              <tr key={student._id} className="hover:bg-white/5">
-                <td className="px-6 py-4">{student.name}</td>
-                <td className="px-6 py-4">{student.roll}</td>
-                <td className="px-6 py-4">{student.branch}</td>
-                <td className="px-6 py-4">{student.currSem}</td>
-                <td className="px-6 py-4">{student.section}</td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(student)}
-                      className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                    >
-                      <Edit className="w-4 h-4 text-indigo-400" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(student._id)}
-                      className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+      {isOpen && (
+        <div className="p-4 border-t border-zinc-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {(batches[title] || []).map((semester) => (
+              <SemesterCard
+                key={`${title}-${semester}`}
+                department={title}
+                semester={semester}
+                onPromote={handlePromoteSemester}
+                onDelete={handleDeleteSemester}
+              />
             ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-between items-center mt-4">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg disabled:opacity-50 text-gray-200"
-          >
-            Next
-          </button>
-        </div>
-        <span className="text-sm text-gray-400">
-          Page {page} of {totalPages}
-        </span>
-      </div>
-
-      {isFormOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 overflow-auto">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-950 p-8 rounded-xl w-full max-w-md space-y-6 border border-white/10 shadow-2xl overflow-auto"
-          >
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">
-                {editingStudent ? "Edit Student" : "Add New Student"}
-              </h2>
-              <button
-                onClick={handleCloseForm}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => handleFormDataChange("name", e.target.value)}
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-gray-500"
-                />
+            {(!batches[title] || batches[title].length === 0) && (
+              <div className="col-span-full text-center py-8 bg-zinc-800/30 rounded-lg">
+                <p className="text-zinc-400">
+                  No semesters found. Click "Add Semester" to get started.
+                </p>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) =>
-                    handleFormDataChange("email", e.target.value)
-                  }
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-gray-500"
-                />
-              </div>
-              {!editingStudent && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleFormDataChange("password", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-gray-500"
-                  />
-                  <p className="mt-1 text-sm text-gray-400">
-                    Password must contain at least 8 characters, including
-                    uppercase, lowercase, numbers, and special characters
-                  </p>
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Roll Number
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.roll}
-                  onChange={(e) => handleFormDataChange("roll", e.target.value)}
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-gray-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Branch
-                </label>
-                <select
-                  required
-                  value={formData.branch}
-                  onChange={(e) =>
-                    handleFormDataChange("branch", e.target.value)
-                  }
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white"
-                >
-                  <option value="">Select Branch</option>
-                  {branches.map((br) => (
-                    <option key={br} value={br}>
-                      {br}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Semester
-                </label>
-                <select
-                  required
-                  value={formData.semester}
-                  onChange={(e) =>
-                    handleFormDataChange("semester", e.target.value)
-                  }
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white"
-                >
-                  <option value="">Select Semester</option>
-                  {semesters.map((sem) => (
-                    <option key={sem} value={sem}>
-                      Semester {sem}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Section
-                </label>
-                <select
-                  required
-                  value={formData.section}
-                  onChange={(e) =>
-                    handleFormDataChange("section", e.target.value)
-                  }
-                  className="w-full px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white"
-                >
-                  <option value="">Select Section</option>
-                  {sections.map((sec) => (
-                    <option key={sec} value={sec}>
-                      Section {sec}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-4 pt-4">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg disabled:opacity-50 font-medium transition-colors"
-                >
-                  {isLoading ? "Saving..." : "Save"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCloseForm}
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </motion.div>
+            )}
+          </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// --- Main Students Page Component ---
+export default function Students() {
+  const [batches, setBatches] = useState<Batches>({
+    "COMPUTER SCIENCE": ["Sem 1", "Sem 3", "Sem 5", "Sem 7"],
+    "ELECTRONICS & COMMUNICATION": ["Sem 1", "Sem 3", "Sem 5"],
+    "FIRST YEAR (ALL)": ["Sem 1"],
+  });
+
+  return (
+    <div className="bg-zinc-900/70 backdrop-blur-sm rounded-lg p-2 border-white/20 border-[1px]  z-10 lg:h-[90vh] w-full text-zinc-200 flex flex-col">
+      {/* Sticky Header */}
+      <header className="flex-shrink-0 border-b-4 border-white/30 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            <h1 className="text-3xl font-bold text-white">
+              Manage Students
+            </h1>
+          </div>
+        </div>
+      </header>
+
+      {/* Scrollable Content Area */}
+      <main className="flex-grow overflow-y-auto">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          {Object.keys(batches)
+            .sort()
+            .map((dept) => (
+              <DepartmentSection
+                key={dept}
+                title={dept}
+                batches={batches}
+                setBatches={setBatches}
+              />
+            ))}
+        </div>
+      </main>
     </div>
   );
 }
