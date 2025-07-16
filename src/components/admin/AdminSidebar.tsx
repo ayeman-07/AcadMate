@@ -131,14 +131,14 @@ export default function AdminSidebar({ onClose }: AdminSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white/5 backdrop-blur-sm border-r border-white/10">
+    <div className="flex flex-col h-full bg-black border-r border-white/30">
       <div className="p-6 border-b border-white/10 flex items-center justify-between">
         <h1 className="text-xl font-bold text-white font-montserrat">
           Admin Panel
         </h1>
         <button
           onClick={onClose}
-          className="p-2 rounded-lg hover:bg-white/5 transition-colors lg:hidden"
+          className="p-2 rounded-lg hover:bg-blue-500/80 transition-colors lg:hidden"
         >
           <X className="w-5 h-5 text-white" />
         </button>
@@ -157,7 +157,7 @@ export default function AdminSidebar({ onClose }: AdminSidebarProps) {
                     : "text-gray-300 hover:bg-white/5 hover:text-white"
                 } ${
                   pathname.startsWith(item.href) && !item.subItems
-                    ? "bg-white/10"
+                    ? "bg-blue-600/50"
                     : ""
                 }`}
               >
