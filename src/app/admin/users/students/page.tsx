@@ -119,7 +119,7 @@ const SemesterCard: FC<SemesterCardProps> = ({
   onDelete,
 }) => (
   <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 flex flex-col justify-between shadow-md hover:shadow-teal-900/20 hover:border-zinc-600 transition-all duration-300 cursor-pointer">
-    <Link href={`/admin/users/students/${department.toLowerCase()}/${semester.toLowerCase()}`} className="flex flex-col h-full">
+    <Link href={`/admin/users/students/${department}/${semester}`} className="flex flex-col h-full">
       <div>
         <h3 className="text-lg font-bold text-zinc-100">{semester}</h3>
         <p className="text-sm text-zinc-400">{department} Department</p>

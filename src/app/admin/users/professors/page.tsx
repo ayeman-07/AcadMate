@@ -168,7 +168,7 @@ export default function ProfessorManagement() {
 
       <div className="flex gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
           <input
             type="text"
             placeholder="Search by name or email..."
