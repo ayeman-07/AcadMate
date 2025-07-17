@@ -130,6 +130,8 @@ export default function MarksEntryPage() {
           resetFlags[student._id] = false;
         });
         setIsUpdatedFlags(resetFlags);
+        // Optionally update students' marks in the UI (if needed)
+        // This is already handled by setOriginalMarks and marks state
       } else {
         toast.error("Failed to save marks");
       }
@@ -183,8 +185,8 @@ export default function MarksEntryPage() {
         <table className="min-w-full bg-gray-950 text-white text-sm">
           <thead className="bg-gray-800 text-gray-300 uppercase">
             <tr>
-              <th className="px-6 py-3 border-b border-gray-700">Roll No</th>
-              <th className="px-6 py-3 border-b border-gray-700">Name</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">Roll No</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">Name</th>
               <th className="px-6 py-3 border-b border-gray-700 text-center">
                 Marks (Max: {EXAMS[exam].max})
               </th>
@@ -198,8 +200,8 @@ export default function MarksEntryPage() {
                   isUpdatedFlags[student._id] ? "bg-yellow-900/50" : "hover:bg-gray-800"
                 }`}
               >
-                <td className="px-6 py-3 whitespace-nowrap">{student.roll}</td>
-                <td className="px-6 py-3 whitespace-nowrap">{student.name}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-left">{student.roll}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-left">{student.name}</td>
                 <td className="px-6 py-3 text-center">
                   <input
                     type="number"

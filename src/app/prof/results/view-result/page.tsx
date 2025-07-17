@@ -1,0 +1,126 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+interface Student {
+  _id: string;
+  name: string;
+  roll: string;
+}
+
+interface Result {
+  exam: string;
+  marksObtained: number;
+  subject: string;
+}
+
+const EXAMS = [
+  { key: "quiz1", label: "Quiz 1" },
+  { key: "midsem", label: "Midsem" },
+  { key: "quiz2", label: "Quiz 2" },
+  { key: "endsem", label: "Endsem" },
+];
+
+export default function ViewResultPage() {
+  const searchParams = useSearchParams();
+  const subjectId = searchParams.get("subject");
+  const batchCode = searchParams.get("batchCode");
+  const semester = searchParams.get("semester");
+
+  const [students, setStudents] = useState<Student[]>([]);
+  const [results, setResults] = useState<Record<string, Result[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [debugResults, setDebugResults] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchBatchData = async () => {
+      if (!batchCode || !subjectId || !semester) return;
+      setLoading(true);
+      try {
+        const res = await fetch("/api/teaching-assignments/fetch-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ batchCode, subjectId }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setStudents(data.students);
+        } else {
+          setStudents([]);
+          setError(data.error || "Failed to fetch students");
+        }
+
+        // Fetch results for all students in this subject using the new endpoint
+        const resultRes = await fetch("/api/result/fetch-marks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subjectId, batchCode, sem: semester }),
+        });
+        const resultData = await resultRes.json();
+        setDebugResults(resultData); // Debug: store raw results
+        const grouped: Record<string, Result[]> = {};
+        if (resultData?.results) {
+          for (const r of resultData.results) {
+            if (!grouped[r.student]) grouped[r.student] = [];
+            grouped[r.student].push(r);
+          }
+        }
+        setResults(grouped);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBatchData();
+  }, [subjectId, batchCode, semester]);
+
+  if (loading) return <div className="text-white text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
+
+  return (
+    <div className="bg-black text-white min-h-screen p-6 space-y-8">
+      <h2 className="text-3xl font-bold text-white/90 mb-6">📊 View Results</h2>
+      {/* Debug output */}
+      {debugResults && (
+        <pre className="bg-gray-900 text-green-400 p-4 mb-4 rounded text-xs overflow-x-auto max-h-64">
+          {JSON.stringify(debugResults, null, 2)}
+        </pre>
+      )}
+      <div className="overflow-x-auto rounded-lg border border-gray-800">
+        <table className="min-w-full bg-gray-950 text-white text-sm">
+          <thead className="bg-gray-800 text-gray-300 uppercase">
+            <tr>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">Roll No</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">Name</th>
+              {EXAMS.map((exam) => (
+                <th key={exam.key} className="px-6 py-3 border-b border-gray-700 text-center">{exam.label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => {
+              const studentResults = results[student._id] || [];
+              return (
+                <tr key={student._id} className="border-b border-gray-800 transition hover:bg-gray-800">
+                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.roll}</td>
+                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.name}</td>
+                  {EXAMS.map((exam) => {
+                    const res = studentResults.find((r) => r.exam === exam.key);
+                    return (
+                      <td key={exam.key} className="px-6 py-3 text-center">
+                        {res ? res.marksObtained : <span className="text-yellow-400">Pending</span>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
