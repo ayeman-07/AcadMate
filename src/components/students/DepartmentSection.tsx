@@ -54,7 +54,7 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         const updatedDeptList = [...(prev[title] || []), name];
         const updatedAllList = [
           ...(prev["ALL"] || []),
-          `${title.toLowerCase() === "computer science" ? "CSE" : "ECE"} - ${name}`,
+          `${name}`,
         ];
 
         return {

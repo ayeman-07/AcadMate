@@ -20,10 +20,6 @@ const SemesterCard: FC<SemesterCardProps> = ({
   const getSemesterLink = () => {
     const formattedSemester = semester.replace(/\s+/g, "").toLowerCase(); // e.g., 'Sem 3' → 'sem3'
 
-    if (department === "ALL") {
-      return `/admin/users/student/${formattedSemester}`;
-    }
-
     const deptSlug =
       department === "COMPUTER SCIENCE"
         ? "cse"
@@ -31,14 +27,16 @@ const SemesterCard: FC<SemesterCardProps> = ({
         ? "ece"
         : department.toLowerCase().replace(/\s+/g, "-");
 
-    return `/admin/users/student/${deptSlug}/${formattedSemester}`;
+    const finalDeptSlug = deptSlug === "all" ? "all" : deptSlug;
+
+    return `/admin/users/students/${finalDeptSlug}/${formattedSemester}`;
   };
 
   return (
     <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 flex flex-col justify-between shadow-md hover:shadow-teal-900/20 hover:border-zinc-600 transition-all duration-300 cursor-pointer">
       <div>
         <h3 className="text-lg font-bold text-zinc-100">{semester}</h3>
-        <p className="text-sm text-zinc-400">{department} Department</p>
+        <p className="text-sm text-zinc-400">{department}</p>
       </div>
       <div className="mt-4 flex items-center gap-2">
         <Link href={getSemesterLink()}>

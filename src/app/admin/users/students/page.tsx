@@ -38,7 +38,7 @@ export default function Students() {
           }
 
           deptWise[sem.department].push(sem.name);
-          allList.push(`${sem.department === "COMPUTER SCIENCE" ? "CSE" : "ECE"} - ${sem.name}`);
+          allList.push(`${sem.name}`);
         });
 
         setBatches({
