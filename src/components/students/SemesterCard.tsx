@@ -28,13 +28,15 @@ const SemesterCard: FC<SemesterCardProps> = ({
             <ArrowUp className="w-4 h-4 rotate-45" />
           </button>
         </Link>
-        <button
-          onClick={() => onDelete(department, semester)}
-          className="p-2 text-zinc-400 bg-zinc-700 rounded-md hover:bg-red-600 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-zinc-950"
-          aria-label={`Delete ${semester} from ${department}`}
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        {"ALL" !== department && (
+          <button
+            onClick={() => onDelete(department, semester)}
+            className="p-2 text-zinc-400 bg-zinc-700 rounded-md hover:bg-red-600 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-zinc-950"
+            aria-label={`Delete ${semester} from ${department}`}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </div>
   );
