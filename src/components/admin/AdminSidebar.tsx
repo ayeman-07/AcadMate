@@ -13,6 +13,7 @@ import {
   X,
   LucideIcon,
 } from "lucide-react";
+import LogoutButton from "@/components/Logout";
 
 // Interface for a sidebar navigation item
 interface SidebarItem {
@@ -88,6 +89,7 @@ export default function AdminSidebar({ onClose }: AdminSidebarProps) {
           ))}
         </ul>
       </nav>
+      <LogoutButton />
     </div>
   );
 }

@@ -42,11 +42,17 @@ export default function StudentListPanel({ department, semester }: Props) {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
+        limit: "10",
         ...(search && { search }),
-        ...(isAllDepartments ? {} : { branch: department }),
-        ...(semester && !isAllDepartments ? { semester } : {}),
-        ...(isAllDepartments && semFilter ? { semester: semFilter } : {}),
+        ...(department.toLowerCase() !== "all" && { department }),
+        ...(semester &&
+          department.toLowerCase() !== "all" && { sem: semester }),
+        ...(department.toLowerCase() === "all" &&
+          semFilter && { sem: semFilter }),
+        // You can optionally add section filter here if needed like: section: "1"
       });
+
+      console.log("Fetching students with params:", params.toString());
 
       const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
       const data = await res.json();
@@ -177,7 +183,7 @@ export default function StudentListPanel({ department, semester }: Props) {
                       }}
                       className="text-red-500 hover:text-red-600 transition"
                     >
-                      <Trash2 className="w-4 h-4 inline-block" />
+                      <Trash2 className="w-5 h-5   inline-block" />
                     </button>
                   </td>
                 </tr>

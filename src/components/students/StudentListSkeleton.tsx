@@ -15,7 +15,7 @@ const StudentTableSkeleton = () => {
           </tr>
         </thead>
         <tbody className="text-white divide-y divide-white/10">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 10 }).map((_, i) => (
             <tr key={i}>
               {Array.from({ length: 6 }).map((__, j) => (
                 <td key={j} className="px-6 py-4">

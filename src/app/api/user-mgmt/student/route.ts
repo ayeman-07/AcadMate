@@ -5,13 +5,16 @@ import { connectToDB } from "@/lib/db";
 import Student from "@/models/student/student.model";
 
 interface QueryParams {
-  department?: string;
-  semester?: string;
+  branch?: string;
+  currSem?: number;
   $or?: Array<{
     name?: { $regex: string; $options: string };
     roll?: { $regex: string; $options: string };
   }>;
-  branch?: string;
+  section?: string;
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export async function POST(req: Request) {
@@ -70,18 +73,23 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const branch = searchParams.get("branch");
-    const semester = searchParams.get("semester");
+
+    const department = searchParams.get("department"); // maps to branch
+    const sem = searchParams.get("sem"); // maps to currSem
+    const section = searchParams.get("section"); // maps to section
     const search = searchParams.get("search");
+
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
     await connectToDB();
 
-    // Build query
+    
     const query: QueryParams = {};
-    if (branch) query.branch = branch;
-    if (semester) query.semester = semester;
+
+    if (department && department !== "ALL") query.branch = department;
+    if (sem) query.currSem = parseInt(sem[3]);
+    if (section) query.section = section;
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -89,14 +97,12 @@ export async function GET(req: Request) {
       ];
     }
 
-    // Get students with pagination
     const students = await Student.find(query)
       .select("-password")
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    // Get total count
     const total = await Student.countDocuments(query);
 
     return NextResponse.json({

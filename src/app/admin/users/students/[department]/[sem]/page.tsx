@@ -1,17 +1,9 @@
 import StudentListPanel from "@/components/students/StudentListPanel";
 
-interface PageProps {
-  params: {
-    department: string;
-    sem: string;
-  };
-}
-
-export default function StudentBatchPage({ params }: PageProps) {
-  const { department, sem } = params;
-
+export default async function StudentBatchPage({ params }: {params: Promise<{ department: string; sem: string }>}) {
+  const { department, sem } = await params;
   const normalizedDept = decodeURIComponent(department).toUpperCase();
-  const isValidSemester = /^[1-8]$/.test(sem) || normalizedDept === "ALL";
+  const isValidSemester = /^[1-8]$/.test(sem[3]);
 
   return (
     <main className="p-6 text-zinc-100">
