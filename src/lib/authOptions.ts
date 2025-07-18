@@ -63,7 +63,9 @@ const authOptions: NextAuthOptions = {
               if (!user || !user.password)
                 throw new Error("Invalid credentials");
 
-              const isPasswordValid = await user.comparePassword(password);
+              // const isPasswordValid = await user.comparePassword(password);
+
+              const isPasswordValid = user.password === password;
               if (!isPasswordValid) throw new Error("Invalid credentials");
 
               return {
