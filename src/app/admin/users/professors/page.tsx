@@ -137,9 +137,6 @@ export default function ProfessorManagement() {
               <th className="px-6 py-3 text-left text-sm font-semibold">
                 Designation
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">
-                Subject
-              </th>
               <th className="px-6 py-3 text-center text-sm font-semibold">
                 Delete
               </th>
@@ -156,16 +153,13 @@ export default function ProfessorManagement() {
                 <td className="px-6 py-4">{prof.email}</td>
                 <td className="px-6 py-4">{prof.department}</td>
                 <td className="px-6 py-4">{prof.designation}</td>
-                <td className="px-6 py-4">
-                  {prof.subjectAllotment?.subjectName || "-"}
-                </td>
                 <td
                   className="px-6 py-4 text-center"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
                     onClick={() => handleDelete(prof._id)}
-                    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-sm font-semibold text-white w-full max-w-[100px]"
+                    className="bg-red-600/60 hover:bg-red-700/90 px-4 py-2 rounded-md text-sm font-semibold text-white w-full max-w-[100px]"
                   >
                     <Trash2 className="w-4 h-4 inline-block mr-1" />
                   </button>

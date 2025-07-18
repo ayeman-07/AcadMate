@@ -15,7 +15,7 @@ export interface IProfessor extends Document {
   designation?: string;
   avatar?: string;
   phoneNumber?: string;
-  subjectAllotment?: ISubjectAllotment;
+  subjectAllotment?: ISubjectAllotment[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -60,7 +60,10 @@ const professorSchema = new Schema<IProfessor>(
       default: "",
     },
     phoneNumber: String,
-    subjectAllotment: subjectAllotmentSchema,
+    subjectAllotment: {
+      type: [subjectAllotmentSchema],
+      default: [],
+    },
   },
   {
     timestamps: true,
