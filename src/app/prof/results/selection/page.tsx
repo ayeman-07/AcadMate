@@ -40,7 +40,7 @@ export default function ResultsSelectionPage() {
 
   const handleSelect = (assignment: Assignment) => {
     const queryParams = new URLSearchParams({
-      subject: assignment.subject._id,
+      subject: assignment.subject.name || "",
       batchCode: assignment.batchCode,
       semester: assignment.semester.toString(),
     });
@@ -71,7 +71,7 @@ export default function ResultsSelectionPage() {
               <h2 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
                 {assignment.subject.name}
                 <span className="ml-2 text-sm text-gray-400 font-normal">
-                  ({assignment.subject.code || "Code N/A"})
+                  ({assignment.batchCode || "Code N/A"})
                 </span>
               </h2>
             </div>

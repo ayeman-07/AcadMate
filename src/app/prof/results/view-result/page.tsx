@@ -24,7 +24,7 @@ const EXAMS = [
 
 export default function ViewResultPage() {
   const searchParams = useSearchParams();
-  const subjectId = searchParams.get("subject");
+  const subjectName = searchParams.get("subject");
   const batchCode = searchParams.get("batchCode");
   const semester = searchParams.get("semester");
 
@@ -36,13 +36,13 @@ export default function ViewResultPage() {
 
   useEffect(() => {
     const fetchBatchData = async () => {
-      if (!batchCode || !subjectId || !semester) return;
+      if (!batchCode || !subjectName || !semester) return;
       setLoading(true);
       try {
         const res = await fetch("/api/teaching-assignments/fetch-batch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ batchCode, subjectId }),
+          body: JSON.stringify({ batchCode, subjectName, semester }),
         });
         const data = await res.json();
         if (data.success) {
@@ -56,7 +56,7 @@ export default function ViewResultPage() {
         const resultRes = await fetch("/api/result/fetch-marks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subjectId, batchCode, sem: semester }),
+          body: JSON.stringify({ subjectName, batchCode, sem: semester }),
         });
         const resultData = await resultRes.json();
         setDebugResults(resultData); // Debug: store raw results
@@ -75,7 +75,7 @@ export default function ViewResultPage() {
       }
     };
     fetchBatchData();
-  }, [subjectId, batchCode, semester]);
+  }, [subjectName, batchCode, semester]);
 
   if (loading) return <div className="text-white text-center mt-10">Loading...</div>;
   if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
@@ -90,7 +90,7 @@ export default function ViewResultPage() {
         </pre>
       )}
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full bg-gray-950 text-white text-sm">
+        <table className="min-w-full bg-gray-950 text-gray-300 text-sm">
           <thead className="bg-gray-800 text-gray-300 uppercase">
             <tr>
               <th className="px-6 py-3 border-b border-gray-700 text-left">Roll No</th>
@@ -111,7 +111,7 @@ export default function ViewResultPage() {
                     const res = studentResults.find((r) => r.exam === exam.key);
                     return (
                       <td key={exam.key} className="px-6 py-3 text-center">
-                        {res ? res.marksObtained : <span className="text-yellow-400">Pending</span>}
+                        {res ? res.marksObtained : <span className="text-yellow-400/80 font-semibold">Pending</span>}
                       </td>
                     );
                   })}
