@@ -53,7 +53,7 @@ export default function AdminSidebar({ onClose }: AdminSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-black border-r border-white/30 text-gray-300 overflow-y-auto">
+    <div className="h-screen flex flex-col bg-black border-r border-white/30 text-gray-300 overflow-y-auto sticky top-0 lg:w-64 w-full">
       {/* Sidebar Header */}
       <div className="p-6 border-b border-white/10 flex items-center justify-between">
         <h1 className="text-xl font-bold text-white font-montserrat">

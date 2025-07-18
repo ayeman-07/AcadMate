@@ -2,15 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/authOptions";
 import { connectToDB } from "@/lib/db";
-import Professor from "@/models/professor/professor.model";
-
-interface QueryParams {
-  department?: string;
-  $or?: Array<{
-    name?: { $regex: string; $options: string };
-    email?: { $regex: string; $options: string };
-  }>;
-}
+import Professor, { IProfessor } from "@/models/professor/professor.model";
 
 export async function POST(req: Request) {
   try {
@@ -50,6 +42,14 @@ export async function POST(req: Request) {
   }
 }
 
+interface ProfessorQuery {
+  department?: string;
+  designation?: string;
+  name?: { $regex: string; $options: string };
+  "subjectAllotment.subjectName"?: { $regex: string; $options: string };
+  "subjectAllotment.branch"?: string;
+}
+
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -58,31 +58,49 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
+
     const department = searchParams.get("department");
+    const designation = searchParams.get("designation");
     const search = searchParams.get("search");
+    const subject = searchParams.get("subject");
+    const branch = searchParams.get("branch");
+
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
     await connectToDB();
 
-    // Build query
-    const query: QueryParams = {};
-    if (department) query.department = department;
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ];
+    const query: ProfessorQuery = {};
+
+    if (department && department !== "ALL") {
+      query.department = department;
     }
 
-    // Get professors with pagination
-    const professors = await Professor.find(query)
+    if (designation && designation !== "ALL") {
+      query.designation = designation;
+    }
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    if (subject) {
+      query["subjectAllotment.subjectName"] = {
+        $regex: subject,
+        $options: "i",
+      };
+    }
+
+    if (branch) {
+      query["subjectAllotment.branch"] = branch;
+    }
+
+    const professors: Partial<IProfessor>[] = await Professor.find(query)
       .select("-password")
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    // Get total count
     const total = await Professor.countDocuments(query);
 
     return NextResponse.json({
@@ -92,8 +110,8 @@ export async function GET(req: Request) {
       totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error("[PROFESSOR_MANAGEMENT_GET]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    console.error("[PROFESSOR_GET_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
