@@ -3,7 +3,6 @@ import StudentLoginForm from "@/components/auth/StudentLoginForm";
 import ProfessorLoginForm from "@/components/auth/ProfessorLoginForm";
 import AdminLoginForm from "@/components/auth/AdminLoginForm";
 import OTPForm from "@/components/auth/OTPForm";
-import GlassBackground from "@/components/ui/GlassBackground";
 import LoginFormContainer from "@/components/auth/LoginFormContainer";
 import { redirect } from "next/navigation";
 
@@ -37,8 +36,7 @@ export default async function LoginPage({
 
   return (
     <>
-      <GlassBackground />
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4 font-">
         <LoginFormContainer role={normalizedRole}>
           {normalizedRole === "student" && <StudentLoginForm />}
           {normalizedRole === "professor" && !otpRequired && (

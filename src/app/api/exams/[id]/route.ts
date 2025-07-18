@@ -7,9 +7,10 @@ import authOptions from "@/lib/authOptions";
 import { connectToDB } from "@/lib/db";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  _request: Request,
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   try {
     await connectToDB();
     const session = await getServerSession(authOptions);
@@ -36,10 +37,11 @@ export async function GET(
     );
   }
 }
-
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: { id: string } }
+) {
+  const { params } = context;
 ) {
   try {
     await connectToDB();
@@ -78,10 +80,11 @@ export async function PUT(
       { status: 500 }
     );
   }
-}
-
 export async function DELETE(
-  req: Request,
+  request: Request,
+  context: { params: { id: string } }
+) {
+  const { params } = context;
   { params }: { params: { id: string } }
 ) {
   try {

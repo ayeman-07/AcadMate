@@ -1,5 +1,5 @@
 // models/SubjectAssignment.ts
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, models } from "mongoose";
 
 export interface ISubjectAssignment extends Document {
   batchCode: string;
@@ -20,7 +20,7 @@ const SubjectAssignmentSchema = new Schema<ISubjectAssignment>(
 
 SubjectAssignmentSchema.index({ batchCode: 1, currSem: 1 }, { unique: true });
 
-export default mongoose.model<ISubjectAssignment>(
+export default models.SubjectAssignment || mongoose.model<ISubjectAssignment>(
   "SubjectAssignment",
   SubjectAssignmentSchema
 );
