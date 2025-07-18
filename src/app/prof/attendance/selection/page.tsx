@@ -80,7 +80,7 @@ export default function AttendanceSelectionPage() {
               <h2 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
                 {assignment.subject.name || "Untitled Subject"}
                 <span className="ml-2 text-sm text-gray-400 font-normal">
-                  ({assignment.subject.code || "Code N/A"})
+                  ({assignment.batchCode || "Code N/A"})
                 </span>
               </h2>
             </div>

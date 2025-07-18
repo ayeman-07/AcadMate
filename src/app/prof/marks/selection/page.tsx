@@ -21,38 +21,20 @@ type TeachingAssignment = {
   year: string;
 };
 
-type Batch = {
-  code: string;
-  department: string;
-  section: string;
-};
-
 export default function SubjectSelectionPage() {
   const [assignments, setAssignments] = useState<TeachingAssignment[]>([]);
-  const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchAssignments = async () => {
       try {
-        // fetch assignments
-        const [assignmentsRes, batchRes] = await Promise.all([
-          fetch("/api/teaching-assignments"),
-          fetch("/api/user-mgmt/batch"),
-        ]);
+        const res = await fetch("/api/teaching-assignments");
+        if (!res.ok) throw new Error("Failed to fetch subjects");
+        const data = await res.json();
 
-        if (!assignmentsRes.ok) throw new Error("Failed to fetch subjects");
-        if (!batchRes.ok) throw new Error("Failed to fetch batches");
-
-        const assignmentsData = await assignmentsRes.json();
-        console.log("Assignments Data:", assignmentsData);
-        const batchesData = await batchRes.json();
-        console.log("Batches Data:", batchesData);
-
-        setAssignments(assignmentsData);
-        setBatches(batchesData);
+        setAssignments(data);
       } catch (err: any) {
         console.error("Fetch error:", err);
         setError(err.message || "Unknown error");
@@ -61,13 +43,13 @@ export default function SubjectSelectionPage() {
       }
     };
 
-    fetchAllData();
+    fetchAssignments();
   }, []);
 
   const handleSelect = (assignment: TeachingAssignment) => {
     const queryParams = new URLSearchParams({
       semester: assignment.semester.toString(),
-      subject: assignment.subject._id,
+      subject: assignment.subject.name || "",
       batchCode: assignment.batchCode,
     });
 
@@ -90,42 +72,34 @@ export default function SubjectSelectionPage() {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assignments.map((assignment) => {
-          const batchDetails = batches.find(
-            (b) => b.code === assignment.batchCode
-          );
-
-          return (
-            <div
-              key={assignment._id}
-              onClick={() => handleSelect(assignment)}
-              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-blue-500/30 hover:border-blue-400/60 cursor-pointer group"
-            >
-              <div className="flex items-center mb-3">
-                <BookOpen className="w-5 h-5 text-blue-400 mr-2" />
-                <h2 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
-                  {assignment.subject.name || "Untitled Subject"}
-                  <span className="ml-2 text-sm text-gray-400 font-normal">
-                    ({assignment.subject.code || "Code N/A"})
-                  </span>
-                </h2>
-              </div>
-
-              <div className="flex items-center text-sm text-gray-300 mb-2">
-                <GraduationCap className="w-4 h-4 mr-2" />
-                Semester {assignment.semester} — {assignment.batchCode}{" "}
-                {batchDetails &&
-                  `(${batchDetails.department}, Sec ${batchDetails.section})`}{" "}
-                ({assignment.year})
-              </div>
-
-              <div className="flex items-center text-sm text-gray-400">
-                <Mail className="w-4 h-4 mr-2" />
-                {assignment.professor.name} ({assignment.professor.email})
-              </div>
+        {assignments.map((assignment, i) => (
+          <div
+            key={i}
+            onClick={() => handleSelect(assignment)}
+            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-blue-500/30 hover:border-blue-400/60 cursor-pointer group"
+          >
+            <div className="flex items-center mb-3">
+              <BookOpen className="w-5 h-5 text-blue-400 mr-2" />
+              <h2 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
+                {assignment.subject.name || "Untitled Subject"}
+                <span className="ml-2 text-sm text-gray-400 font-normal">
+                  ({assignment.batchCode || "Code N/A"})
+                </span>
+              </h2>
             </div>
-          );
-        })}
+
+            <div className="flex items-center text-sm text-gray-300 mb-2">
+              <GraduationCap className="w-4 h-4 mr-2" />
+              Semester {assignment.semester} — {assignment.batchCode} (
+              {assignment.year})
+            </div>
+
+            <div className="flex items-center text-sm text-gray-400">
+              <Mail className="w-4 h-4 mr-2" />
+              {assignment.professor.name} ({assignment.professor.email})
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
