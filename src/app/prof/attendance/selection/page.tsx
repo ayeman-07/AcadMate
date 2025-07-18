@@ -48,7 +48,7 @@ export default function AttendanceSelectionPage() {
   const handleSelect = (assignment: TeachingAssignment) => {
     const queryParams = new URLSearchParams({
       semester: assignment.semester.toString(),
-      subject: assignment.subject._id,
+      subject: assignment.subject.name || "",
       batchCode: assignment.batchCode,
     });
     router.push(`/prof/attendance/entry?${queryParams.toString()}`);

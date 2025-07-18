@@ -23,7 +23,7 @@ interface Subject {
 
 export default function AttendanceEntryPage() {
   const searchParams = useSearchParams();
-  const subjectId = searchParams.get("subject");
+  const subjectName = searchParams.get("subject");
   const batchCode = searchParams.get("batchCode");
   const semester = searchParams.get("semester");
   const [date, setDate] = useState<Date>(() => new Date());
@@ -32,11 +32,11 @@ export default function AttendanceEntryPage() {
   const [subject, setSubject] = useState<Subject | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showCalendar, setShowCalendar] = useState(false);
+  
 
   useEffect(() => {
     const fetchStudents = async () => {
-      if (!subjectId || !batchCode) {
+      if (!subjectName || !batchCode) {
         setError("Missing subject or batch code");
         setLoading(false);
         return;
@@ -45,7 +45,7 @@ export default function AttendanceEntryPage() {
         const res = await fetch("/api/teaching-assignments/fetch-batch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subjectId, batchCode }),
+          body: JSON.stringify({ batchCode, semester, subjectName }),
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.error || "Failed to fetch students");
@@ -58,7 +58,7 @@ export default function AttendanceEntryPage() {
       }
     };
     fetchStudents();
-  }, [subjectId, batchCode]);
+  }, [subjectName, batchCode]);
 
   // Calendar logic
   const handleCalendarChange = (date: Date | null) => {
