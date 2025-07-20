@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
+    console.log("session:", session)
+
     if (!session?.user || session.user.role !== "professor") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -49,6 +51,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    console.log("session:", session);
+
+    if (!session?.user || session.user.role !== "professor") {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
     await connectToDB();
 
     const { searchParams } = new URL(req.url);

@@ -1,4 +1,32 @@
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/authOptions";
+import { connectToDB } from "@/lib/db";
+import Professor from "@/models/professor/professor.model";
+
+const getProfessor = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.id) {
+    return "Unauthorized";
+  }
+
+  try {
+    await connectToDB();
+
+    console.log("Session user ID:", session.user.id);
+
+    const professor = await Professor.findById(session.user.id);
+
+    if (!professor) {
+      return "Professor not found";
+    }
+
+    return professor;
+  } catch (error) {
+    console.error(error);
+    return "Failed to fetch professor";
+  }
+};
 
 interface SubjectAllotment {
   subjectName: string;
@@ -17,17 +45,25 @@ interface Professor {
   subjectAllotment?: SubjectAllotment[];
 }
 
+
+
 export default async function ProfessorDetailPage() {
   let professor: Professor | null = null;
 
   try {
-    const res = await fetch(`${process.env.NEXT_BASE_URL}/api/professor-profile`, {
-      cache: "no-store",
-    });
+    const res = await getProfessor();
+    professor = res;
+    if (!professor || typeof professor === "string") {
+      if (professor === "Unauthorized") {
+        return new Response("Unauthorized", { status: 401 });
+      } else if (professor === "Professor not found") {
+        return notFound();
+      } else {
+        console.error("Failed to fetch professor", professor);
+        return notFound();
+      }
+    }
 
-    if (!res.ok) return notFound();
-
-    professor = await res.json();
     console.log("Fetched professor:", professor);
   } catch (error) {
     console.error("Failed to fetch professor", error);
