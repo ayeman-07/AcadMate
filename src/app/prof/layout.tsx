@@ -17,6 +17,7 @@ import LogoutButton from "@/components/Logout";
 const navigation = [
   { name: "Dashboard", href: "/prof/dashboard", icon: Home },
   { name: "Marks Entry", href: "/prof/marks/selection", icon: BookOpen },
+  { name: "Attendance", href: "/prof/attendance/selection", icon: BookOpen },
   { name: "Results", href: "/prof/results/selection", icon: BarChart2 },
   { name: "Students", href: "/prof/students", icon: Users },
   { name: "Settings", href: "/prof/settings", icon: Settings },
@@ -31,11 +32,9 @@ export default function ProfessorLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
-      <LogoutButton /> 
-
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className="w-64 bg-black/30 backdrop-blur-lg border-r border-white/10 p-4">
+        <div className="h-screen w-64 bg-black/30 backdrop-blur-lg border-r border-white/10 p-4">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-xl font-bold">Professor Portal</h1>
           </div>
@@ -60,7 +59,9 @@ export default function ProfessorLayout({
               );
             })}
           </nav>
-          
+          <div className="absolute bottom-4 left-4 right-4">
+            <LogoutButton />
+          </div>
         </div>
 
         {/* Main content */}

@@ -2,13 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 import { connectToDB } from "@/lib/db";
-import TeachingAssignment from "@/models/professor/teachingassignment.model";
-import Professor from "@/models/professor/professor.model";
+import Professor, { IProfessor } from "@/models/professor/professor.model";
 import Subject from "@/models/exams/subject.model";
-
-// Log the models to ensure they are registered
-console.log("Professor model loaded:", Professor);
-console.log("Subject model loaded:", Subject);
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,28 +18,71 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const professorId = token.sub;
+    const professor = await Professor.findById(token.sub)
+      .select("_id name email subjectAllotment")
+      .lean<IProfessor>();
 
-    const assignments = await TeachingAssignment.find({
-      professor: professorId,
-    })
-      .populate("professor", "name email")
-      .populate("subject", "code name")
-      .lean();
-
-    if (!assignments.length) {
+    if (!professor || !professor.subjectAllotment?.length) {
       return NextResponse.json(
-        { message: "No assignments found." },
+        { message: "No subject allotment found for this professor." },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(assignments, { status: 200 });
+    const filters = professor.subjectAllotment.map((subj) => ({
+      name: subj.subjectName,
+      dept: subj.branch,
+    }));
+
+    const matchedSubjects = await Subject.find({ $or: filters })
+      .select("_id name code")
+      .lean();
+
+    const teachingAssignments = professor.subjectAllotment.map(
+      (allotment, index) => {
+        const subject = matchedSubjects.find(
+          (subj) =>
+            subj.name === allotment.subjectName &&
+            subj.dept === allotment.branch
+        );
+
+        const semester = subject?.code ? parseInt(subject.code[3]) : 1;
+
+        const year =
+          semester <= 2
+            ? "1st year"
+            : semester <= 4
+            ? "2nd year"
+            : semester <= 6
+            ? "3rd year"
+            : "4th year";
+
+        return {
+          _id: professor._id?.toString(), 
+          professor: {
+            _id: professor._id?.toString(),
+            name: professor.name,
+            email: professor.email,
+          },
+          subject: {
+            _id: subject?._id?.toString() || "unknown",
+            name: subject?.name || allotment.subjectName,
+            code: subject?.code || "",
+          },
+          batchCode: `${allotment.branch}-${allotment.section}`,
+          semester,
+          year,
+        };
+      }
+    );
+
+    return NextResponse.json(teachingAssignments, { status: 200 });
   } catch (error) {
-    console.error("[TeachingAssignment GET ERROR]:", error);
+    console.error("[GET /api/professor/subjects] Error:", error);
     return NextResponse.json(
       { message: "Internal Server Error", error },
       { status: 500 }
     );
   }
 }
+

@@ -13,11 +13,11 @@ export default function AdminLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-black/50 backdrop-blur-sm flex">
+    <div className="min-h-screen flex">
       {/* Mobile Sidebar */}
       <div
         className={`fixed inset-0 z-50 lg:hidden transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)}></div>
+        <div className="fixed inset-0  backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)}></div>
         <div className="relative z-10 w-64 h-full">
           <AdminSidebar onClose={() => setIsSidebarOpen(false)} />
         </div>
@@ -39,7 +39,6 @@ export default function AdminLayout({
           </button>
           {children}
         </div>
-        <LogoutButton />
       </main>
     </div>
   );

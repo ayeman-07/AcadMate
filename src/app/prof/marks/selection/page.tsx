@@ -33,6 +33,7 @@ export default function SubjectSelectionPage() {
         const res = await fetch("/api/teaching-assignments");
         if (!res.ok) throw new Error("Failed to fetch subjects");
         const data = await res.json();
+
         setAssignments(data);
       } catch (err: any) {
         console.error("Fetch error:", err);
@@ -48,7 +49,7 @@ export default function SubjectSelectionPage() {
   const handleSelect = (assignment: TeachingAssignment) => {
     const queryParams = new URLSearchParams({
       semester: assignment.semester.toString(),
-      subject: assignment.subject._id,
+      subject: assignment.subject.name || "",
       batchCode: assignment.batchCode,
     });
 
@@ -71,9 +72,9 @@ export default function SubjectSelectionPage() {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assignments.map((assignment) => (
+        {assignments.map((assignment, i) => (
           <div
-            key={assignment._id}
+            key={i}
             onClick={() => handleSelect(assignment)}
             className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-blue-500/30 hover:border-blue-400/60 cursor-pointer group"
           >
@@ -82,7 +83,7 @@ export default function SubjectSelectionPage() {
               <h2 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
                 {assignment.subject.name || "Untitled Subject"}
                 <span className="ml-2 text-sm text-gray-400 font-normal">
-                  ({assignment.subject.code || "Code N/A"})
+                  ({assignment.batchCode || "Code N/A"})
                 </span>
               </h2>
             </div>

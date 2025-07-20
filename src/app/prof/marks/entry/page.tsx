@@ -29,27 +29,31 @@ const EXAMS = {
 export default function MarksEntryPage() {
   const searchParams = useSearchParams();
   const semester = searchParams.get("semester");
-  const subjectId = searchParams.get("subject");
+  const subjectName = searchParams.get("subject");
   const batchCode = searchParams.get("batchCode");
 
   const [students, setStudents] = useState<Student[]>([]);
   const [subject, setSubject] = useState<Subject | null>(null);
   const [marks, setMarks] = useState<Record<string, string>>({});
-  const [originalMarks, setOriginalMarks] = useState<Record<string, string>>({});
-  const [isUpdatedFlags, setIsUpdatedFlags] = useState<Record<string, boolean>>({});
+  const [originalMarks, setOriginalMarks] = useState<Record<string, string>>(
+    {}
+  );
+  const [isUpdatedFlags, setIsUpdatedFlags] = useState<Record<string, boolean>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
   const [exam, setExam] = useState<keyof typeof EXAMS>("quiz1");
 
   useEffect(() => {
     const fetchBatchData = async () => {
-      if (!batchCode || !subjectId || !semester || !exam) return;
+      if (!batchCode || !subjectName || !semester || !exam) return;
 
       setLoading(true);
       try {
         const res = await fetch("/api/teaching-assignments/fetch-batch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ batchCode, subjectId }),
+          body: JSON.stringify({ batchCode, semester, subjectName }),
         });
 
         const data = await res.json();
@@ -68,17 +72,18 @@ export default function MarksEntryPage() {
           setOriginalMarks(initialMarks);
           setIsUpdatedFlags(initialUpdatedFlags);
         } else {
-          console.error(data.error);
+          toast.error(data.error || "Failed to load batch data");
         }
       } catch (error) {
         console.error("Failed to fetch batch data:", error);
+        toast.error("Error fetching data");
       } finally {
         setLoading(false);
       }
     };
 
     fetchBatchData();
-  }, [batchCode, subjectId, semester, exam]);
+  }, [batchCode, subjectName, semester, exam]);
 
   const handleMarkChange = (studentId: string, value: string) => {
     setMarks((prev) => {
@@ -94,6 +99,11 @@ export default function MarksEntryPage() {
   };
 
   const handleSubmit = async () => {
+    if (!subject?._id) {
+      toast.error("Subject ID not available");
+      return;
+    }
+
     const allEntries = students.map((student) => ({
       studentId: student._id,
       marks: Number(marks[student._id]) || 0,
@@ -106,8 +116,10 @@ export default function MarksEntryPage() {
     }
 
     const requestBody = {
-      subjectId,
-      batchCode,
+      subjectId: subject?._id, // use optional chaining
+      batchCode: `${batchCode?.split("-")[0]}${semester}0${
+        batchCode?.split("-")[1]
+      }`,
       sem: semester,
       exam,
       entries: allEntries,
@@ -139,7 +151,11 @@ export default function MarksEntryPage() {
   };
 
   if (loading) {
-    return <div className="p-6 text-white text-center text-lg">Loading student data...</div>;
+    return (
+      <div className="p-6 text-white text-center text-lg">
+        Loading student data...
+      </div>
+    );
   }
 
   return (
@@ -183,8 +199,12 @@ export default function MarksEntryPage() {
         <table className="min-w-full bg-gray-950 text-white text-sm">
           <thead className="bg-gray-800 text-gray-300 uppercase">
             <tr>
-              <th className="px-6 py-3 border-b border-gray-700">Roll No</th>
-              <th className="px-6 py-3 border-b border-gray-700">Name</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Roll No
+              </th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Name
+              </th>
               <th className="px-6 py-3 border-b border-gray-700 text-center">
                 Marks (Max: {EXAMS[exam].max})
               </th>
@@ -195,18 +215,26 @@ export default function MarksEntryPage() {
               <tr
                 key={student._id}
                 className={`border-b border-gray-800 transition ${
-                  isUpdatedFlags[student._id] ? "bg-yellow-900/50" : "hover:bg-gray-800"
+                  isUpdatedFlags[student._id]
+                    ? "bg-yellow-900/50"
+                    : "hover:bg-gray-800"
                 }`}
               >
-                <td className="px-6 py-3 whitespace-nowrap">{student.roll}</td>
-                <td className="px-6 py-3 whitespace-nowrap">{student.name}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-left">
+                  {student.roll}
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap text-left">
+                  {student.name}
+                </td>
                 <td className="px-6 py-3 text-center">
                   <input
                     type="number"
                     min={0}
                     max={EXAMS[exam].max}
                     value={marks[student._id] || ""}
-                    onChange={(e) => handleMarkChange(student._id, e.target.value)}
+                    onChange={(e) =>
+                      handleMarkChange(student._id, e.target.value)
+                    }
                     className={`w-24 px-3 py-1 rounded-md bg-gray-900 border text-center outline-none transition
                       ${
                         isUpdatedFlags[student._id]

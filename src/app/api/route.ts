@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import Subject from "@/models/exams/subject.model";
 import { connectToDB } from "@/lib/db";
 import Professor from "@/models/professor/professor.model";
-import TeachingAssignment from "@/models/professor/teachingassignment.model";
 
 export async function POST() {
   await connectToDB();
@@ -245,30 +244,31 @@ export async function POST() {
         );
       }
 
-      const exists = await TeachingAssignment.findOne({
-        professor: professor._id,
-        subject: subject._id,
-        batchCode: assign.batchCode,
-        semester: assign.semester,
-        year: assign.year,
-      });
+    //   const exists = await TeachingAssignment.findOne({
+    //     professor: professor._id,
+    //     subject: subject._id,
+    //     batchCode: assign.batchCode,
+    //     semester: assign.semester,
+    //     year: assign.year,
+    //   });
 
-      if (!exists) {
-        const record = await TeachingAssignment.create({
-          professor: professor._id,
-          subject: subject._id,
-          batchCode: assign.batchCode,
-          semester: assign.semester,
-          year: assign.year,
-        });
-        results.push(record);
-      }
+    //   if (!exists) {
+    //     const record = await TeachingAssignment.create({
+    //       professor: professor._id,
+    //       subject: subject._id,
+    //       batchCode: assign.batchCode,
+    //       semester: assign.semester,
+    //       year: assign.year,
+    //     });
+    //     results.push(record);
+    //   }
     }
 
-    return NextResponse.json(
-      { message: "Teaching Assignments seeded", data: results },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: "Teaching Assignments seeded successfully" }, { status: 201 });
+    // return NextResponse.json(
+    //   { message: "Teaching Assignments seeded", data: results },
+    //   { status: 201 }
+    // );
   } catch (error) {
     console.error("[SEED_TA_ERROR]", error);
     return NextResponse.json(

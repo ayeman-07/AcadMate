@@ -1,6 +1,12 @@
 import { Schema, model, models, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
+export interface ISubjectAllotment {
+  subjectName: string;
+  branch: string;
+  section: string;
+}
+
 export interface IProfessor extends Document {
   name: string;
   email: string;
@@ -9,8 +15,18 @@ export interface IProfessor extends Document {
   designation?: string;
   avatar?: string;
   phoneNumber?: string;
+  subjectAllotment?: ISubjectAllotment[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+const subjectAllotmentSchema = new Schema<ISubjectAllotment>(
+  {
+    subjectName: { type: String, required: true },
+    branch: { type: String, required: true },
+    section: { type: String, required: true },
+  },
+  { _id: false } // avoids Mongoose creating an _id for this nested object
+);
 
 const professorSchema = new Schema<IProfessor>(
   {
@@ -44,6 +60,10 @@ const professorSchema = new Schema<IProfessor>(
       default: "",
     },
     phoneNumber: String,
+    subjectAllotment: {
+      type: [subjectAllotmentSchema],
+      default: [],
+    },
   },
   {
     timestamps: true,
