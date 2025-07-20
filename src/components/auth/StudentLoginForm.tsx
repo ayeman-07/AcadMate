@@ -34,7 +34,7 @@ export default function StudentLoginForm() {
         return;
       }
 
-      router.push("/student/dashboard");
+      router.push("/student");
       router.refresh();
     } catch (error) {
       console.error("Login error:", error);

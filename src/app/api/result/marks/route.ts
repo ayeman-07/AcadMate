@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     console.log("[POST] Request body:", body);
 
-    const { exam, sem, subjectId, batchCode, entries } = body;
+    const { exam, sem, subjectName, batchCode, entries } = body;
 
-    if (!exam || !sem || !subjectId || !batchCode || !entries?.length) {
+    if (!exam || !sem || !subjectName || !batchCode || !entries?.length) {
       console.error("[POST] Invalid payload:", body);
       return NextResponse.json(
         { success: false, error: "Invalid payload" },
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       const newResults = entries.map((entry: any) => ({
         student: entry.studentId,
         exam,
-        subject: subjectId,
+        subject: subjectName,
         marksObtained: entry.marks || 0,
         sem,
         batchCode,
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
       const result = await Result.findOne({
         student: entry.studentId,
-        subject: subjectId,
+        subject: subjectName,
         exam,
         sem,
         batchCode,
