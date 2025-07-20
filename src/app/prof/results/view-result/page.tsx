@@ -33,7 +33,7 @@ export default function ViewResultPage() {
   const [results, setResults] = useState<Record<string, Result[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [debugResults, setDebugResults] = useState<any>(null);
+
 
   useEffect(() => {
     const fetchBatchData = async () => {
@@ -84,7 +84,7 @@ export default function ViewResultPage() {
         }
 
         console.log("Fetched results:", resultData);
-        setDebugResults(resultData);
+       
 
         const grouped: Record<string, Result[]> = {};
         if (resultData?.results) {
@@ -116,12 +116,7 @@ export default function ViewResultPage() {
     <div className="bg-black text-white min-h-screen p-6 space-y-8">
       <h2 className="text-3xl font-bold text-white/90 mb-6">📊 View Results</h2>
 
-      {/* Debug output */}
-      {debugResults && (
-        <pre className="bg-gray-900 text-green-400 p-4 mb-4 rounded text-xs overflow-x-auto max-h-64">
-          {JSON.stringify(debugResults, null, 2)}
-        </pre>
-      )}
+      
 
       <div className="overflow-x-auto rounded-lg border border-gray-800">
         <table className="min-w-full bg-gray-950 text-gray-300 text-sm">
