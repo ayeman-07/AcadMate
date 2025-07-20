@@ -76,11 +76,9 @@ const authOptions: NextAuthOptions = {
               };
             case "admin":
               if (!email) throw new Error("Email is required");
-              user = await Admin
-                .findOne({
-                  email: email.toLowerCase(),
-                })
-                .select("+password");
+              user = await Admin.findOne({
+                email: email.toLowerCase(),
+              }).select("+password");
               break;
             default:
               throw new Error("Invalid role");
@@ -101,10 +99,7 @@ const authOptions: NextAuthOptions = {
             };
           }
 
-          if (
-            !otp  &&
-            isPasswordValid
-          ) {
+          if (!otp && isPasswordValid) {
             throw new Error("OTP required");
           }
           if (otp) {
@@ -147,6 +142,7 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        session.user.id = token.sub as string; 
         session.user.role = token.role as string;
         if (token.roll) {
           session.user.roll = token.roll as string;

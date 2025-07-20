@@ -1,20 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
+// src/app/api/result/fetch-marks/route.ts
+
 import { connectToDB } from "@/lib/db";
 import Result from "@/models/exams/result.model";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    await connectToDB();
-    const { subjectId, batchCode, sem } = await req.json();
-    if (!batchCode || !sem) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const body = await req.json();
+    const { subjectName, batchCode, sem } = body;
+   
+
+    console.log("📥 Received request:", { subjectName, batchCode, sem });
+
+    if (!subjectName || !batchCode || !sem) {
+      return NextResponse.json(
+        { success: false, error: "Missing fields" },
+        { status: 400 }
+      );
     }
-    const query: any = { batchCode, sem };
-    if (subjectId) query.subject = subjectId;
-    const results = await Result.find(query).lean();
-    return NextResponse.json({ results }, { status: 200 });
+
+    await connectToDB();
+
+    const results = await Result.find({ batchCode, sem })
+      .populate("student")
+      .populate("subject");
+
+      console.log(batchCode, sem);
+
+      console.log("📤 Fetched results:", results.length, "results found");
+
+    return NextResponse.json({ success: true, results }, { status: 200 });
   } catch (error) {
-    console.error("[FETCH_MARKS_ERROR]", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("❌ API error:", error);
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
-} 
+}

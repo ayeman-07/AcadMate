@@ -15,11 +15,10 @@ import {
 import LogoutButton from "@/components/Logout";
 
 const navigation = [
-  { name: "Dashboard", href: "/prof/dashboard", icon: Home },
+  { name: "Dashboard", href: "/prof", icon: Home },
   { name: "Marks Entry", href: "/prof/marks/selection", icon: BookOpen },
   { name: "Attendance", href: "/prof/attendance/selection", icon: BookOpen },
   { name: "Results", href: "/prof/results/selection", icon: BarChart2 },
-  { name: "Students", href: "/prof/students", icon: Users },
   { name: "Settings", href: "/prof/settings", icon: Settings },
 ];
 

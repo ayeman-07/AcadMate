@@ -116,7 +116,7 @@ export default function MarksEntryPage() {
     }
 
     const requestBody = {
-      subjectId: subject?._id, // use optional chaining
+      subjectName: subject?.name, // use optional chaining
       batchCode: `${batchCode?.split("-")[0]}${semester}0${
         batchCode?.split("-")[1]
       }`,
@@ -133,6 +133,7 @@ export default function MarksEntryPage() {
       });
 
       const data = await res.json();
+      console.log("Response data:", data);
       if (data.success) {
         toast.success("Marks submitted successfully");
 

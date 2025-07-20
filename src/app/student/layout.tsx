@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/student/dashboard", icon: FileBarChart2 },
+  { name: "Dashboard", href: "/student", icon: FileBarChart2 },
   { name: "Results", href: "/student/results", icon: FileBarChart2 },
   { name: "Attendance", href: "/student/attendance", icon: CalendarCheck },
   { name: "Assignments", href: "/student/assignments", icon: FileText },
@@ -58,16 +58,16 @@ export default function StudentLayout({
                 </Link>
               );
             })}
+
+            <div className="absolute bottom-4 left-4 right-4">
+              <LogoutButton />
+            </div>
           </nav>
-
-
         </div>
 
         {/* Main content */}
         <div className="flex-1 overflow-y-auto p-6">{children}</div>
       </div>
-
-      <LogoutButton />
     </div>
   );
 }

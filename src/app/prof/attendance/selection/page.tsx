@@ -69,9 +69,9 @@ export default function AttendanceSelectionPage() {
         Select a Subject for Attendance
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assignments.map((assignment) => (
+        {assignments.map((assignment, index) => (
           <div
-            key={assignment._id}
+            key={index}
             onClick={() => handleSelect(assignment)}
             className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-blue-500/30 hover:border-blue-400/60 cursor-pointer group"
           >
