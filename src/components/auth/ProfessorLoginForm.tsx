@@ -33,7 +33,7 @@ export default function ProfessorLoginForm() {
     if (res?.error) {
       setError(res.error);
     } else {
-      router.push("/prof/dashboard");
+      router.push("/prof");
     }
   }
 
