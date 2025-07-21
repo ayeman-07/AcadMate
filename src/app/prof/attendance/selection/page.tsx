@@ -33,6 +33,7 @@ export default function AttendanceSelectionPage() {
         const res = await fetch("/api/teaching-assignments");
         if (!res.ok) throw new Error("Failed to fetch subjects");
         const data = await res.json();
+
         setAssignments(data);
       } catch (err: any) {
         console.error("Fetch error:", err);

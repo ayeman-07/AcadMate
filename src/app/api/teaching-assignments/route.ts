@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     }));
 
     const matchedSubjects = await Subject.find({ $or: filters })
-      .select("_id name code")
+      .select("_id name code dept")
       .lean();
 
     const teachingAssignments = professor.subjectAllotment.map(
@@ -45,7 +45,6 @@ export async function GET(req: NextRequest) {
             subj.name === allotment.subjectName &&
             subj.dept === allotment.branch
         );
-
         const semester = subject?.code ? parseInt(subject.code[3]) : 1;
 
         const year =
