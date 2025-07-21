@@ -34,7 +34,6 @@ const sidebarItems: SidebarItem[] = [
     icon: Calendar,
     href: "/admin/attendance",
   },
-  { title: "Subject Allotment", icon: BookOpen, href: "/admin/allotment" },
   { title: "Settings & Profile", icon: Settings, href: "/admin/settings" },
 ];
 

@@ -13,8 +13,6 @@ type Batches = {
   [departmentName: string]: SemesterInfo[];
 };
 
-
-
 interface Semester {
   _id: string;
   name: string;
@@ -22,7 +20,7 @@ interface Semester {
   studentCount: number;
 }
 
-export default function Students() {
+export default function ResultsPage() {
   const [batches, setBatches] = useState<Batches>({
     "COMPUTER SCIENCE": [],
     "ELECTRONICS & COMMUNICATION": [],
@@ -67,7 +65,7 @@ export default function Students() {
     <div className="bg-zinc-900/70 backdrop-blur-md rounded-xl border border-white/20 w-full h-[90vh] flex flex-col text-zinc-200 overflow-hidden">
       <header className="border-b border-white/20 px-6 py-4 flex items-center justify-between">
         <h1 className="text-2xl sm:text-3xl font-semibold text-white">
-          Manage Students
+          Check Results
         </h1>
       </header>
 
