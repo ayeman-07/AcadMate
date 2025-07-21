@@ -21,11 +21,6 @@ interface Subject {
   code: string;
 }
 
-interface AttendanceRecord {
-  studentId: string;
-  isPresent: boolean;
-}
-
 export default function AttendanceEntryPage() {
   const searchParams = useSearchParams();
   const subjectName = searchParams.get("subject");
@@ -34,7 +29,7 @@ export default function AttendanceEntryPage() {
 
   const [date, setDate] = useState<Date>(() => new Date());
   const [attendance, setAttendance] = useState<{
-    [studentId: string]: boolean;
+    [studentId: string]: "present" | "absent";
   }>({});
   const [students, setStudents] = useState<Student[]>([]);
   const [subject, setSubject] = useState<Subject | null>(null);
@@ -42,7 +37,6 @@ export default function AttendanceEntryPage() {
   const [error, setError] = useState("");
   const [loadingIds, setLoadingIds] = useState<{ [id: string]: boolean }>({});
 
-  // Fetch students and subject
   useEffect(() => {
     const fetchStudents = async () => {
       if (!subjectName || !batchCode || !semester) {
@@ -72,7 +66,6 @@ export default function AttendanceEntryPage() {
     fetchStudents();
   }, [subjectName, batchCode, semester]);
 
-  // Fetch attendance for selected date
   const fetchAttendance = async (selectedDate: Date) => {
     try {
       const res = await fetch(
@@ -83,14 +76,22 @@ export default function AttendanceEntryPage() {
       const data = await res.json();
 
       if (data.success && Array.isArray(data.attendance)) {
-        const newAttendance: { [studentId: string]: boolean } = {};
+        const newAttendance: { [studentId: string]: "present" | "absent" } = {};
         data.attendance.forEach((record: any) => {
-          newAttendance[record.studentId._id || record.studentId] =
-            record.isPresent;
+          newAttendance[record.studentId._id || record.studentId] = record.isPresent
+            ? "present"
+            : "absent";
         });
         setAttendance(newAttendance);
       } else {
-        setAttendance({}); // no records yet
+        const today = new Date();
+        if (selectedDate <= today) {
+          const defaultAttendance: { [id: string]: "absent" } = {};
+          students.forEach((s) => (defaultAttendance[s._id] = "absent"));
+          setAttendance(defaultAttendance);
+        } else {
+          setAttendance({});
+        }
       }
     } catch (err) {
       console.error("Error fetching attendance:", err);
@@ -110,8 +111,16 @@ export default function AttendanceEntryPage() {
     }
   };
 
-  const handleCheckbox = async (id: string) => {
-    const newPresence = !attendance[id];
+  const handleRadioChange = async (
+    id: string,
+    value: "present" | "absent"
+  ) => {
+    const today = new Date();
+    if (date > today) {
+      alert("You cannot mark attendance for a future date.");
+      return;
+    }
+
     setLoadingIds((prev) => ({ ...prev, [id]: true }));
 
     try {
@@ -123,14 +132,14 @@ export default function AttendanceEntryPage() {
           subjectName: subject?.name,
           subjectCode: subject?.code,
           date: date.toISOString(),
-          isPresent: newPresence,
+          isPresent: value === "present",
           sem: Number(semester),
         }),
       });
 
       if (!res.ok) throw new Error("Failed to update attendance");
 
-      setAttendance((prev) => ({ ...prev, [id]: newPresence }));
+      setAttendance((prev) => ({ ...prev, [id]: value }));
     } catch (err) {
       console.error("Attendance update error:", err);
       alert("Failed to update attendance for student.");
@@ -138,41 +147,6 @@ export default function AttendanceEntryPage() {
       setLoadingIds((prev) => ({ ...prev, [id]: false }));
     }
   };
-
-
-  // const handleSave = async () => {
-  //   try {
-  //     const promises = students.map((student) => {
-  //       return fetch("/api/attendance", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({
-  //           studentId: student._id,
-  //           subjectName: subject?.name,
-  //           subjectCode: subject?.code,
-  //           date: date.toISOString(),
-  //           isPresent: !!attendance[student._id],
-  //           sem: Number(semester),
-  //         }),
-  //       });
-  //     });
-
-  //     const results = await Promise.all(promises);
-  //     const allSuccess = results.every((res) => res.ok);
-
-  //     if (allSuccess) {
-  //       alert("Attendance saved successfully!");
-  //     } else {
-  //       alert("Some entries failed to save. Check console for details.");
-  //       results.forEach(async (res) => {
-  //         if (!res.ok) console.error(await res.json());
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.error("Error saving attendance:", err);
-  //     alert("Failed to save attendance.");
-  //   }
-  // };
 
   if (loading)
     return <div className="text-white text-center mt-10">Loading...</div>;
@@ -237,7 +211,7 @@ export default function AttendanceEntryPage() {
                 Name
               </th>
               <th className="px-6 py-3 border-b border-gray-700 text-center">
-                Present
+                Attendance
               </th>
             </tr>
           </thead>
@@ -253,12 +227,34 @@ export default function AttendanceEntryPage() {
                   {loadingIds[student._id] ? (
                     <div className="w-5 h-5 mx-auto border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
-                    <input
-                      type="checkbox"
-                      checked={!!attendance[student._id]}
-                      onChange={() => handleCheckbox(student._id)}
-                      className="w-5 h-5 accent-indigo-600"
-                    />
+                    <div className="flex justify-center items-center gap-4">
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`attendance-${student._id}`}
+                          value="present"
+                          checked={attendance[student._id] === "present"}
+                          onChange={() =>
+                            handleRadioChange(student._id, "present")
+                          }
+                          className="accent-green-500"
+                        />
+                        <span className="text-green-400 text-sm">P</span>
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`attendance-${student._id}`}
+                          value="absent"
+                          checked={attendance[student._id] === "absent"}
+                          onChange={() =>
+                            handleRadioChange(student._id, "absent")
+                          }
+                          className="accent-red-500"
+                        />
+                        <span className="text-red-400 text-sm">A</span>
+                      </label>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -266,15 +262,6 @@ export default function AttendanceEntryPage() {
           </tbody>
         </table>
       </div>
-
-      {/* <div className="flex justify-end">
-        <button
-          onClick={handleSave}
-          className="bg-indigo-600 hover:bg-indigo-700 transition px-6 py-2 text-white font-semibold rounded-lg shadow-md"
-        >
-          Save Attendance
-        </button>
-      </div> */}
     </div>
   );
 }
