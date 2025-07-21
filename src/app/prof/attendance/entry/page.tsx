@@ -201,8 +201,8 @@ export default function AttendanceEntryPage() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full bg-gray-950 text-white text-sm">
-          <thead className="bg-gray-800 text-gray-300 uppercase">
+        <table className="min-w-full bg-gray-950 text-white text-sm rounded-md overflow-hidden border border-gray-800 shadow-sm">
+          <thead className="bg-gray-800 text-gray-300 uppercase text-xs tracking-wider">
             <tr>
               <th className="px-6 py-3 border-b border-gray-700 text-left">
                 Roll No
@@ -216,49 +216,64 @@ export default function AttendanceEntryPage() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
-              <tr
-                key={student._id}
-                className="border-b border-gray-800 transition hover:bg-gray-800"
-              >
-                <td className="px-6 py-3">{student.roll}</td>
-                <td className="px-6 py-3">{student.name}</td>
-                <td className="px-6 py-3 text-center">
-                  {loadingIds[student._id] ? (
-                    <div className="w-5 h-5 mx-auto border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <div className="flex justify-center items-center gap-4">
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`attendance-${student._id}`}
-                          value="present"
-                          checked={attendance[student._id] === "present"}
-                          onChange={() =>
-                            handleRadioChange(student._id, "present")
-                          }
-                          className="accent-green-500"
-                        />
-                        <span className="text-green-400 text-sm">P</span>
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`attendance-${student._id}`}
-                          value="absent"
-                          checked={attendance[student._id] === "absent"}
-                          onChange={() =>
-                            handleRadioChange(student._id, "absent")
-                          }
-                          className="accent-red-500"
-                        />
-                        <span className="text-red-400 text-sm">A</span>
-                      </label>
-                    </div>
-                  )}
+            {students.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-6 py-8 text-center text-gray-400 italic border-t border-gray-800"
+                >
+                  No student found for this batch and subject.
                 </td>
               </tr>
-            ))}
+            ) : (
+              students.map((student) => (
+                <tr
+                  key={student._id}
+                  className="border-b border-gray-800 hover:bg-gray-800 transition-all"
+                >
+                  <td className="px-6 py-3 whitespace-nowrap">
+                    {student.roll}
+                  </td>
+                  <td className="px-6 py-3 whitespace-nowrap">
+                    {student.name}
+                  </td>
+                  <td className="px-6 py-3 text-center">
+                    {loadingIds[student._id] ? (
+                      <div className="w-5 h-5 mx-auto border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <div className="flex justify-center items-center gap-4">
+                        <label className="flex items-center gap-1">
+                          <input
+                            type="radio"
+                            name={`attendance-${student._id}`}
+                            value="present"
+                            checked={attendance[student._id] === "present"}
+                            onChange={() =>
+                              handleRadioChange(student._id, "present")
+                            }
+                            className="accent-green-500 w-5 h-5 cursor-pointer"
+                          />
+                          <span className="text-green-400 text-lg">P</span>
+                        </label>
+                        <label className="flex items-center gap-1">
+                          <input
+                            type="radio"
+                            name={`attendance-${student._id}`}
+                            value="absent"
+                            checked={attendance[student._id] === "absent"}
+                            onChange={() =>
+                              handleRadioChange(student._id, "absent")
+                            }
+                            className="accent-red-500 w-5 h-5 cursor-pointer"
+                          />
+                          <span className="text-red-400 text-lg">A</span>
+                        </label>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

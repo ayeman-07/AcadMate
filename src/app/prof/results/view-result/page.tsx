@@ -116,14 +116,16 @@ export default function ViewResultPage() {
     <div className="bg-black text-white min-h-screen p-6 space-y-8">
       <h2 className="text-3xl font-bold text-white/90 mb-6">📊 View Results</h2>
 
-      
-
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full bg-gray-950 text-gray-300 text-sm">
-          <thead className="bg-gray-800 text-gray-300 uppercase">
+        <table className="min-w-full bg-gray-950 text-gray-300 text-sm rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-gray-800 text-gray-300 uppercase text-xs tracking-wider">
             <tr>
-              <th className="px-6 py-3 border-b border-gray-700 text-left">Roll No</th>
-              <th className="px-6 py-3 border-b border-gray-700 text-left">Name</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Roll No
+              </th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Name
+              </th>
               {EXAMS.map((exam) => (
                 <th
                   key={exam.key}
@@ -135,30 +137,53 @@ export default function ViewResultPage() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => {
-              const studentResults = results[student._id] || [];
-              return (
-                <tr
-                  key={student._id}
-                  className="border-b border-gray-800 transition hover:bg-gray-800"
+            {students.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={2 + EXAMS.length}
+                  className="px-6 py-8 text-center text-gray-400 italic border-t border-gray-800"
                 >
-                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.roll}</td>
-                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.name}</td>
-                  {EXAMS.map((exam) => {
-                    const res = studentResults.find((r) => r.exam === exam.key);
-                    return (
-                      <td key={exam.key} className="px-6 py-3 text-center">
-                        {res ? (
-                          res.marksObtained
-                        ) : (
-                          <span className="text-yellow-400/80 font-semibold">Pending</span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+                  No student records found.
+                </td>
+              </tr>
+            ) : (
+              students.map((student) => {
+                const studentResults = results[student._id] || [];
+
+                return (
+                  <tr
+                    key={student._id}
+                    className="border-b border-gray-800 transition-all duration-150 hover:bg-gray-800"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-left">
+                      {student.roll}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-left">
+                      {student.name}
+                    </td>
+                    {EXAMS.map((exam) => {
+                      const res = studentResults.find(
+                        (r) => r.exam === exam.key
+                      );
+
+                      return (
+                        <td key={exam.key} className="px-6 py-4 text-center">
+                          {res ? (
+                            <span className="text-white">
+                              {res.marksObtained}
+                            </span>
+                          ) : (
+                            <span className="text-yellow-400 font-semibold">
+                              Pending
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

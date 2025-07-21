@@ -44,129 +44,86 @@ export default function MarksEntryPage() {
   const [loading, setLoading] = useState(true);
   const [exam, setExam] = useState<keyof typeof EXAMS>("quiz1");
 
-  // useEffect(() => {
-  //   const fetchBatchData = async () => {
-  //     if (!batchCode || !subjectName || !semester || !exam) return;
-
-  //     setLoading(true);
-  //     try {
-  //       const res = await fetch("/api/teaching-assignments/fetch-batch", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ batchCode, semester, subjectName }),
-  //       });
-
-  //       const data = await res.json();
-  //       if (data.success) {
-  //         setStudents(data.students);
-  //         setSubject(data.subject);
-
-  //         const initialMarks: Record<string, string> = {};
-  //         const initialUpdatedFlags: Record<string, boolean> = {};
-  //         data.students.forEach((student: Student) => {
-  //           initialMarks[student._id] = "0";
-  //           initialUpdatedFlags[student._id] = false;
-  //         });
-
-  //         setMarks(initialMarks);
-  //         setOriginalMarks(initialMarks);
-  //         setIsUpdatedFlags(initialUpdatedFlags);
-  //       } else {
-  //         toast.error(data.error || "Failed to load batch data");
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to fetch batch data:", error);
-  //       toast.error("Error fetching data");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchBatchData();
-  // }, [batchCode, subjectName, semester, exam]);
-
-
   useEffect(() => {
-  const fetchBatchData = async () => {
-    if (!batchCode || !subjectName || !semester || !exam) return;
+    const fetchBatchData = async () => {
+      if (!batchCode || !subjectName || !semester || !exam) return;
 
-    setLoading(true);
-    try {
-      // Fetch batch students
-      const res = await fetch("/api/teaching-assignments/fetch-batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ batchCode, semester, subjectName }),
-      });
+      setLoading(true);
+      try {
+        // Fetch batch students
+        const res = await fetch("/api/teaching-assignments/fetch-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ batchCode, semester, subjectName }),
+        });
 
-      const data = await res.json();
-      if (!data.success) {
-        toast.error(data.error || "Failed to load batch data");
-        setLoading(false);
-        return;
-      }
-
-      setStudents(data.students);
-      setSubject(data.subject);
-
-      // Initialize marks data
-      const initialMarks: Record<string, string> = {};
-      const initialOriginalMarks: Record<string, string> = {};
-      const initialUpdatedFlags: Record<string, boolean> = {};
-      data.students.forEach((student: Student) => {
-        initialMarks[student._id] = "0";
-        initialOriginalMarks[student._id] = "0";
-        initialUpdatedFlags[student._id] = false;
-      });
-
-      // Fetch previously entered marks
-      const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
-      const resultRes = await fetch("/api/result/fetch-marks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subjectName,
-          batchCode: modifiedBatchCode,
-          sem: semester,
-        }),
-      });
-
-      const rawText = await resultRes.text();
-      if (rawText) {
-        let resultData: any;
-        try {
-          resultData = JSON.parse(rawText);
-        } catch (err) {
-          console.error("Failed to parse result JSON:", rawText);
-          throw new Error("Invalid result response");
+        const data = await res.json();
+        if (!data.success) {
+          toast.error(data.error || "Failed to load batch data");
+          setLoading(false);
+          return;
         }
 
-        if (resultData?.results) {
-          for (const r of resultData.results) {
-            const studentId =
-              typeof r.student === "string" ? r.student : r.student._id;
-            if (r.exam === exam) {
-              initialMarks[studentId] = r.marksObtained.toString();
-              initialOriginalMarks[studentId] = r.marksObtained.toString();
+        setStudents(data.students);
+        setSubject(data.subject);
+
+        // Initialize marks data
+        const initialMarks: Record<string, string> = {};
+        const initialOriginalMarks: Record<string, string> = {};
+        const initialUpdatedFlags: Record<string, boolean> = {};
+        data.students.forEach((student: Student) => {
+          initialMarks[student._id] = "0";
+          initialOriginalMarks[student._id] = "0";
+          initialUpdatedFlags[student._id] = false;
+        });
+
+        // Fetch previously entered marks
+        const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
+        const resultRes = await fetch("/api/result/fetch-marks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subjectName,
+            batchCode: modifiedBatchCode,
+            sem: semester,
+          }),
+        });
+
+        const rawText = await resultRes.text();
+        if (rawText) {
+          let resultData: any;
+          try {
+            resultData = JSON.parse(rawText);
+          } catch (err) {
+            console.error("Failed to parse result JSON:", rawText);
+            throw new Error("Invalid result response");
+          }
+
+          if (resultData?.results) {
+            for (const r of resultData.results) {
+              const studentId =
+                typeof r.student === "string" ? r.student : r.student._id;
+              if (r.exam === exam) {
+                initialMarks[studentId] = r.marksObtained.toString();
+                initialOriginalMarks[studentId] = r.marksObtained.toString();
+              }
             }
           }
         }
+
+        setMarks(initialMarks);
+        setOriginalMarks(initialOriginalMarks);
+        setIsUpdatedFlags(initialUpdatedFlags);
+      } catch (error) {
+        console.error("Failed to fetch batch or marks data:", error);
+        toast.error("Error fetching data");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setMarks(initialMarks);
-      setOriginalMarks(initialOriginalMarks);
-      setIsUpdatedFlags(initialUpdatedFlags);
-    } catch (error) {
-      console.error("Failed to fetch batch or marks data:", error);
-      toast.error("Error fetching data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchBatchData();
-}, [batchCode, subjectName, semester, exam]);
-
+    fetchBatchData();
+  }, [batchCode, subjectName, semester, exam]);
 
   const handleMarkChange = (studentId: string, value: string) => {
     setMarks((prev) => {
@@ -280,8 +237,8 @@ export default function MarksEntryPage() {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full bg-gray-950 text-white text-sm">
-          <thead className="bg-gray-800 text-gray-300 uppercase">
+        <table className="min-w-full bg-gray-950 text-white text-sm rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-gray-800 text-gray-300 uppercase text-xs tracking-wider">
             <tr>
               <th className="px-6 py-3 border-b border-gray-700 text-left">
                 Roll No
@@ -295,40 +252,51 @@ export default function MarksEntryPage() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
-              <tr
-                key={student._id}
-                className={`border-b border-gray-800 transition ${
-                  isUpdatedFlags[student._id]
-                    ? "bg-yellow-900/50"
-                    : "hover:bg-gray-800"
-                }`}
-              >
-                <td className="px-6 py-3 whitespace-nowrap text-left">
-                  {student.roll}
-                </td>
-                <td className="px-6 py-3 whitespace-nowrap text-left">
-                  {student.name}
-                </td>
-                <td className="px-6 py-3 text-center">
-                  <input
-                    type="number"
-                    min={0}
-                    max={EXAMS[exam].max}
-                    value={marks[student._id] || ""}
-                    onChange={(e) =>
-                      handleMarkChange(student._id, e.target.value)
-                    }
-                    className={`w-24 px-3 py-1 rounded-md bg-gray-900 border text-center outline-none transition
-                      ${
-                        isUpdatedFlags[student._id]
-                          ? "border-yellow-400 ring-yellow-400 ring-2"
-                          : "border-gray-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-500"
-                      }`}
-                  />
+            {students.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-6 py-8 text-center text-gray-400 italic border-t border-gray-800"
+                >
+                  No students found for this batch and subject.
                 </td>
               </tr>
-            ))}
+            ) : (
+              students.map((student) => (
+                <tr
+                  key={student._id}
+                  className={`border-b border-gray-800 transition-all duration-150 ${
+                    isUpdatedFlags[student._id]
+                      ? "bg-yellow-900/50"
+                      : "hover:bg-gray-800"
+                  }`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-left font-medium">
+                    {student.roll}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-left">
+                    {student.name}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <input
+                      type="number"
+                      min={0}
+                      max={EXAMS[exam].max}
+                      value={marks[student._id] || ""}
+                      onChange={(e) =>
+                        handleMarkChange(student._id, e.target.value)
+                      }
+                      className={`w-24 px-3 py-1 rounded-md bg-gray-900 text-white text-sm border text-center outline-none transition-all
+                ${
+                  isUpdatedFlags[student._id]
+                    ? "border-yellow-400 ring-2 ring-yellow-400"
+                    : "border-gray-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-500"
+                }`}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
