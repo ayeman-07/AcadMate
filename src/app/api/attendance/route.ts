@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    console.log("session:", session)
-
     if (!session?.user || session.user.role !== "professor") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -30,16 +28,39 @@ export async function POST(req: NextRequest) {
     ) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
-    console.log(session.user.id, "session user id");
-    const attendance = await Attendance.create({
+
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existing = await Attendance.findOne({
       studentId,
-      professor: session.user.id,
-      subjectName,
       subjectCode,
-      date, // Directly using the date from the request
-      isPresent,
-      sem,
+      date: { $gte: startOfDay, $lte: endOfDay },
     });
+
+    let attendance;
+    if (existing) {
+      // Update existing record
+      existing.isPresent = isPresent;
+      existing.sem = sem;
+      existing.subjectName = subjectName;
+      await existing.save();
+      attendance = existing;
+    } else {
+      // Create new record
+      attendance = await Attendance.create({
+        studentId,
+        professor: session.user.id,
+        subjectName,
+        subjectCode,
+        date,
+        isPresent,
+        sem,
+      });
+    }
 
     return NextResponse.json({ success: true, attendance }, { status: 201 });
   } catch (err) {
@@ -47,6 +68,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
+
 
 
 export async function GET(req: NextRequest) {
