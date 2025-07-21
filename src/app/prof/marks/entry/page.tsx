@@ -44,46 +44,129 @@ export default function MarksEntryPage() {
   const [loading, setLoading] = useState(true);
   const [exam, setExam] = useState<keyof typeof EXAMS>("quiz1");
 
+  // useEffect(() => {
+  //   const fetchBatchData = async () => {
+  //     if (!batchCode || !subjectName || !semester || !exam) return;
+
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch("/api/teaching-assignments/fetch-batch", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ batchCode, semester, subjectName }),
+  //       });
+
+  //       const data = await res.json();
+  //       if (data.success) {
+  //         setStudents(data.students);
+  //         setSubject(data.subject);
+
+  //         const initialMarks: Record<string, string> = {};
+  //         const initialUpdatedFlags: Record<string, boolean> = {};
+  //         data.students.forEach((student: Student) => {
+  //           initialMarks[student._id] = "0";
+  //           initialUpdatedFlags[student._id] = false;
+  //         });
+
+  //         setMarks(initialMarks);
+  //         setOriginalMarks(initialMarks);
+  //         setIsUpdatedFlags(initialUpdatedFlags);
+  //       } else {
+  //         toast.error(data.error || "Failed to load batch data");
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch batch data:", error);
+  //       toast.error("Error fetching data");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchBatchData();
+  // }, [batchCode, subjectName, semester, exam]);
+
+
   useEffect(() => {
-    const fetchBatchData = async () => {
-      if (!batchCode || !subjectName || !semester || !exam) return;
+  const fetchBatchData = async () => {
+    if (!batchCode || !subjectName || !semester || !exam) return;
 
-      setLoading(true);
-      try {
-        const res = await fetch("/api/teaching-assignments/fetch-batch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ batchCode, semester, subjectName }),
-        });
+    setLoading(true);
+    try {
+      // Fetch batch students
+      const res = await fetch("/api/teaching-assignments/fetch-batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ batchCode, semester, subjectName }),
+      });
 
-        const data = await res.json();
-        if (data.success) {
-          setStudents(data.students);
-          setSubject(data.subject);
-
-          const initialMarks: Record<string, string> = {};
-          const initialUpdatedFlags: Record<string, boolean> = {};
-          data.students.forEach((student: Student) => {
-            initialMarks[student._id] = "0";
-            initialUpdatedFlags[student._id] = false;
-          });
-
-          setMarks(initialMarks);
-          setOriginalMarks(initialMarks);
-          setIsUpdatedFlags(initialUpdatedFlags);
-        } else {
-          toast.error(data.error || "Failed to load batch data");
-        }
-      } catch (error) {
-        console.error("Failed to fetch batch data:", error);
-        toast.error("Error fetching data");
-      } finally {
+      const data = await res.json();
+      if (!data.success) {
+        toast.error(data.error || "Failed to load batch data");
         setLoading(false);
+        return;
       }
-    };
 
-    fetchBatchData();
-  }, [batchCode, subjectName, semester, exam]);
+      setStudents(data.students);
+      setSubject(data.subject);
+
+      // Initialize marks data
+      const initialMarks: Record<string, string> = {};
+      const initialOriginalMarks: Record<string, string> = {};
+      const initialUpdatedFlags: Record<string, boolean> = {};
+      data.students.forEach((student: Student) => {
+        initialMarks[student._id] = "0";
+        initialOriginalMarks[student._id] = "0";
+        initialUpdatedFlags[student._id] = false;
+      });
+
+      // Fetch previously entered marks
+      const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
+      const resultRes = await fetch("/api/result/fetch-marks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectName,
+          batchCode: modifiedBatchCode,
+          sem: semester,
+        }),
+      });
+
+      const rawText = await resultRes.text();
+      if (rawText) {
+        let resultData: any;
+        try {
+          resultData = JSON.parse(rawText);
+        } catch (err) {
+          console.error("Failed to parse result JSON:", rawText);
+          throw new Error("Invalid result response");
+        }
+
+        if (resultData?.results) {
+          for (const r of resultData.results) {
+            const studentId =
+              typeof r.student === "string" ? r.student : r.student._id;
+            if (r.exam === exam) {
+              initialMarks[studentId] = r.marksObtained.toString();
+              initialOriginalMarks[studentId] = r.marksObtained.toString();
+            }
+          }
+        }
+      }
+
+      setMarks(initialMarks);
+      setOriginalMarks(initialOriginalMarks);
+      setIsUpdatedFlags(initialUpdatedFlags);
+    } catch (error) {
+      console.error("Failed to fetch batch or marks data:", error);
+      toast.error("Error fetching data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchBatchData();
+}, [batchCode, subjectName, semester, exam]);
+
 
   const handleMarkChange = (studentId: string, value: string) => {
     setMarks((prev) => {
