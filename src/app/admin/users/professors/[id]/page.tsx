@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Edit, Check, Upload, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
@@ -23,16 +23,13 @@ interface Professor {
   subjectAllotment?: SubjectAllotment[];
 }
 
-export default function ProfessorProfilePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ProfessorProfilePage() {
   const router = useRouter();
   const [professor, setProfessor] = useState<Professor | null>(null);
   const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
   const [draft, setDraft] = useState<Partial<Professor>>({});
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const params = useParams();
 
   useEffect(() => {
     fetch(`/api/user-mgmt/professor/${params.id}`)
