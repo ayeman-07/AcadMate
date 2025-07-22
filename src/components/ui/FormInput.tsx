@@ -11,10 +11,12 @@ interface FormInputProps {
   type: string;
   label: string;
   placeholder: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   required?: boolean;
   autoComplete?: string;
   error?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function FormInput({
@@ -27,6 +29,8 @@ export function FormInput({
   required = false,
   autoComplete,
   error,
+  value,
+  onChange,
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
@@ -41,7 +45,7 @@ export function FormInput({
         htmlFor={id}
         className="text-sm font-medium text-gray-300 flex items-center gap-2"
       >
-        <Icon className="w-4 h-4" />
+        {Icon && <Icon className="w-4 h-4" />}
         {label}
       </label>
       <div className="relative">
@@ -55,8 +59,12 @@ export function FormInput({
             error ? "border-red-500/50" : "border-white/10"
           } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-200 placeholder-gray-400`}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        {Icon && (
+          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        )}
         {isPassword && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
             <AnimatedEyeIcon
