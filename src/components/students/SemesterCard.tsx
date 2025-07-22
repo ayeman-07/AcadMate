@@ -11,6 +11,7 @@ interface SemesterCardProps {
   studentCount?: number;
   actualDepartment?: string;
   onDelete: (department: string, semester: string) => void;
+  section?: string; // Optional, used to differentiate between "students" and "results"
 }
 
 const SemesterCard: FC<SemesterCardProps> = ({
@@ -19,6 +20,7 @@ const SemesterCard: FC<SemesterCardProps> = ({
   studentCount,
   actualDepartment,
   onDelete,
+  section = "students"
 }) => {
   const router = useRouter();
 
@@ -60,14 +62,25 @@ const SemesterCard: FC<SemesterCardProps> = ({
 
       <div className="mt-4 flex items-center gap-2">
         <Link href={getSemesterLink()}>
-          <button className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-teal-800 rounded-md hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 focus:ring-offset-zinc-950">
+          <button
+            className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-950 ${
+              section === "students"
+                ? "bg-teal-800 hover:bg-teal-700 focus:ring-teal-500"
+                : section === "results"
+                ? "bg-purple-800 hover:bg-purple-700 focus:ring-purple-500"
+                : section === "attendance"
+                ? "bg-blue-800 hover:bg-blue-700 focus:ring-blue-500"
+                : "bg-zinc-700 hover:bg-zinc-600 focus:ring-zinc-500"
+            }`}
+          >
             Navigate
             <ArrowUp className="w-4 h-4 rotate-45" />
           </button>
         </Link>
 
         {/* Show delete if not from "ALL" tab */}
-        {department !== "ALL" && (
+        {/* Show delete if not from "ALL" tab */}
+        {section === "students" && department !== "ALL" && (
           <button
             onClick={() => onDelete(department, semester)}
             className="p-2 text-zinc-400 bg-zinc-700 rounded-md hover:bg-red-600 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-zinc-950"

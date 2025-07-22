@@ -192,6 +192,7 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
                     title === "ALL" ? semesterObj.department : undefined
                   }
                   onDelete={deleteSemester}
+                  section={section}
                 />
               ))}
             </div>
