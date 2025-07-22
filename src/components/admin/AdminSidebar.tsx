@@ -70,22 +70,29 @@ export default function AdminSidebar({ onClose }: AdminSidebarProps) {
       {/* Navigation Links */}
       <nav className="flex-1 overflow-y-auto py-4">
         <ul className="space-y-1 px-4">
-          {sidebarItems.map((item) => (
-            <li key={item.title}>
-              <Link
-                href={item.href}
-                onClick={handleItemClick}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  pathname === item.href
-                    ? "bg-blue-600/50 text-white"
-                    : "hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.title}</span>
-              </Link>
-            </li>
-          ))}
+          {sidebarItems.map((item) => {
+            const isActive =
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname.startsWith(item.href);
+
+            return (
+              <li key={item.title}>
+                <Link
+                  href={item.href}
+                  onClick={handleItemClick}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-blue-600/50 text-white"
+                      : "hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-medium">{item.title}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <LogoutButton />

@@ -77,6 +77,7 @@ export default function ResultsPage() {
               title={dept}
               batches={batches}
               setBatches={setBatches}
+              section="results"
             />
           ))}
         </div>

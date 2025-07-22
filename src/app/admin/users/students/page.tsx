@@ -79,6 +79,7 @@ export default function Students() {
               title={dept}
               batches={batches}
               setBatches={setBatches}
+              section="students"
             />
           ))}
         </div>

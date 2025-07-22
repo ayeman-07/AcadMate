@@ -1,7 +1,6 @@
 import React, {
   FC,
   useState,
-  useEffect,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -24,12 +23,14 @@ interface DepartmentSectionProps {
   title: string;
   batches: Batches;
   setBatches: Dispatch<SetStateAction<Batches>>;
+  section: string;
 }
 
 const DepartmentSection: FC<DepartmentSectionProps> = ({
   title,
   batches,
   setBatches,
+  section
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -153,25 +154,27 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <h2 className="text-lg sm:text-xl font-semibold text-white">{title}</h2>
-        <div className="flex items-center gap-4">
-          {title !== "ALL" && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsModalOpen(true);
-              }}
-              className="bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-2 focus:outline-none"
-            >
-              <Plus className="w-4 h-4" />
-              Add Semester
-            </button>
-          )}
-          <ChevronDown
-            className={`w-5 h-5 text-zinc-300 transition-transform duration-300 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </div>
+        {section === "students" && (
+          <div className="flex items-center gap-4">
+            {title !== "ALL" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
+                className="bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-2 focus:outline-none"
+              >
+                <Plus className="w-4 h-4" />
+                Add Semester
+              </button>
+            )}
+            <ChevronDown
+              className={`w-5 h-5 text-zinc-300 transition-transform duration-300 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+        )}
       </div>
 
       {/* Body */}
