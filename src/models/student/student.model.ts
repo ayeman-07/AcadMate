@@ -16,6 +16,7 @@ export interface IStudent extends Document {
   email?: string;
   phoneNumber?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  // batchId?: string;
 }
 
 export interface IStudentMethods {

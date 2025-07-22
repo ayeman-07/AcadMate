@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
+    console.log("session:", session);
+
     if (!session?.user || session.user.role !== "professor") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -27,7 +29,7 @@ export async function POST(req: NextRequest) {
       !sem
     ) {
       return new NextResponse("Missing required fields", { status: 400 });
-    }
+    } 
 
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
