@@ -10,7 +10,7 @@ type SubjectAllotment = {
 
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
-  const branch = searchParams.get("branch"); // e.g. "CSE"
+  const branch = searchParams.get("branch")?.toUpperCase(); // e.g. "CSE"
   const semester = searchParams.get("semester"); // e.g. "4"
 
   if (!branch || !semester) {
