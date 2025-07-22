@@ -38,7 +38,14 @@ const SemesterCard: FC<SemesterCardProps> = ({
         ? actualDepartment.toLowerCase().replace(/\s+/g, "-")
         : deptSlug;
 
-    return `/admin/users/students/${finalDeptSlug}/${formattedSemester}`;
+    const basePath =
+      section === "results"
+        ? "/admin/results"
+        : section === "attendance"
+        ? "/admin/attendance"
+        : "/admin/users/students";
+
+    return `${basePath}/${finalDeptSlug}/${formattedSemester}`;
   };
 
   return (
