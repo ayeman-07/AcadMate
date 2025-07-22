@@ -112,13 +112,7 @@ export default function ProfessorManagement() {
           <option value="Associate Professor">Associate Professor</option>
           <option value="Professor">Professor</option>
         </select>
-        <input
-          type="text"
-          placeholder="Search by subject..."
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 text-zinc-100 px-4 py-2 rounded-md w-full sm:w-60 placeholder-zinc-400"
-        />
+       
       </div>
 
       <div className="overflow-x-auto border border-zinc-800 rounded-md shadow-sm">
