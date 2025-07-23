@@ -104,10 +104,17 @@ export default function AttendancePage() {
           page: page.toString(),
           limit: "10",
           ...(search && { search }),
+          ...(branch.toLowerCase() !== "all" && { department: branch.toUpperCase() }),
+          ...(semester &&
+            branch.toLowerCase() !== "all" && { sem: `sem${semester}` }),
         });
+
+        console.log("Fetching students with params:", params.toString());
 
         const studentRes = await fetch(`/api/user-mgmt/student?${params}`);
         const studentData = await studentRes.json();
+
+        console.log("Student Data:", studentData);
         setStudents(studentData.students || []);
         setTotalPages(studentData.totalPages || 1);
 

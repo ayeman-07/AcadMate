@@ -84,7 +84,6 @@ export async function GET(req: Request) {
 
     await connectToDB();
 
-    
     const query: QueryParams = {};
 
     if (department && department !== "ALL") query.branch = department;
