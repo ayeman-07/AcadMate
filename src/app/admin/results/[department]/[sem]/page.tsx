@@ -1,4 +1,5 @@
 import StudentListPanel from "@/components/students/ResultListPanel";
+import Link from "next/link";
 
 export default async function StudentBatchPage({ params }: {params: Promise<{ department: string; sem: string }>}) {
   const { department, sem } = await params;
@@ -14,12 +15,12 @@ export default async function StudentBatchPage({ params }: {params: Promise<{ de
           <p className="bg-zinc-800/60 px-8 py-4 rounded-lg text-xl font-semibold text-red-400/80 shadow-md border border-zinc-700">
             🚫 No such batch exists...
           </p>
-          <a
+          <Link
             href="/admin/users/students"
             className="inline-block px-6 py-2 font-semibold rounded-md bg-teal-700 hover:bg-teal-600 text-white shadow transition duration-200"
           >
             Go Back to Students
-          </a>
+          </Link>
         </div>
       )}
     </main>

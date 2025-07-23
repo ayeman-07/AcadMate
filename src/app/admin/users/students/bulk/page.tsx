@@ -3,34 +3,50 @@
 import * as XLSX from "xlsx";
 import { useState } from "react";
 
+type Student = {
+  name: string;
+  roll: string;
+  email: string;
+  password: string;
+  branch: string;
+  section: string;
+  currSem: number;
+  batchCode: string;
+};
+
 export default function StudentUpload() {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [branch, setBranch] = useState("CSE");
   const [section, setSection] = useState("1");
-  const [currSem, setCurrSem] = useState(2);
-  const [batchCode, setBatchCode] = useState("UI24CS");
+  const [currSem, setCurrSem] = useState(1);
+  const [batchCode, setBatchCode] = useState("");
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = await file.arrayBuffer();
-    const workbook = XLSX.read(data);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = evt.target?.result;
+      if (!data) return;
+      const workbook = XLSX.read(data, { type: "binary" });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet);
 
-    const formatted = jsonData.map((row: any) => ({
-      name: row["Name"],
-      roll: row["Enrollment No."].toUpperCase(),
-      email: row["Email"],
-      password: row["Password"],
-      branch,
-      section,
-      currSem,
-      batchCode,
-    }));
+      const formatted: Student[] = jsonData.map((row) => ({
+        name: String(row["Name"] ?? ""),
+        roll: String(row["Enrollment No."] ?? "").toUpperCase(),
+        email: String(row["Email"] ?? ""),
+        password: String(row["Password"] ?? ""),
+        branch,
+        section,
+        currSem,
+        batchCode,
+      }));
 
-    setStudents(formatted);
+      setStudents(formatted);
+    };
+    reader.readAsBinaryString(file);
   };
 
   const handleSubmit = async () => {
