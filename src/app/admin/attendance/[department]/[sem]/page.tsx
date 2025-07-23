@@ -21,8 +21,17 @@ interface Student {
   section: string;
 }
 
-interface AttendanceMap {
-  [studentId: string]: "present" | "absent";
+interface AttendanceRecord {
+  _id: string;
+  studentId: string;
+  isPresent: boolean;
+  subjectName: string;
+  professor: string;
+  subjectCode: string;
+  date: string;
+  sem: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function AttendancePage() {
@@ -32,7 +41,7 @@ export default function AttendancePage() {
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
-  const [attendance, setAttendance] = useState<AttendanceMap>({});
+  const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -58,13 +67,22 @@ export default function AttendancePage() {
           toast.error(data.error || "Failed to load subjects");
         }
       } catch (err) {
-        console.log(err)
+        console.log(err);
         toast.error("Failed to fetch subject allotments");
       }
     };
 
     fetchSubjects();
   }, [branch, semester]);
+
+  // const getAttendanceStatus = (
+  //   studentId: string
+  // ): "present" | "absent" | null => {
+  //   const record = attendanceList.find((a) => a.studentId === studentId);
+  //   if (!record) return null;
+  //   return record.isPresent ? "present" : "absent";
+  // };
+
 
   // Fetch Students & Attendance
   useEffect(() => {
@@ -73,8 +91,11 @@ export default function AttendancePage() {
     const subject = subjects.find((s) => s._id === selectedSubject);
     if (!subject) return;
 
+    console.log("Selected Subject:", subject);
+
     const semester = subject.code[3];
-    const batchCode = `${branch.toUpperCase()}${semester}01`;
+    console.log(subject.code, "asdasda");
+    const batchCode = subject.code;
 
     const fetchAttendanceData = async () => {
       setLoading(true);
@@ -95,24 +116,13 @@ export default function AttendancePage() {
         );
         const attendanceData = await attendanceRes.json();
 
+        console.log("Attendance Data:", attendanceData);
+
         if (
           attendanceData.success &&
           Array.isArray(attendanceData.attendance)
         ) {
-          type AttendanceRecord = {
-            studentId: string | { _id: string };
-            isPresent: boolean;
-          };
-
-          const attMap: AttendanceMap = {};
-          attendanceData.attendance.forEach((record: AttendanceRecord) => {
-            const studentId =
-              typeof record.studentId === "string"
-          ? record.studentId
-          : record.studentId._id;
-            attMap[studentId] = record.isPresent ? "present" : "absent";
-          });
-          setAttendance(attMap);
+          setAttendanceList(attendanceData.attendance as AttendanceRecord[]);
         }
       } catch (err) {
         console.log(err);
@@ -171,15 +181,12 @@ export default function AttendancePage() {
       </div>
 
       {/* Table */}
+      {/* Conditional Content */}
       {loading ? (
         <StudentTableSkeleton />
       ) : students.length === 0 ? (
         <div className="text-center text-white py-8 bg-zinc-900/60 rounded-lg border border-white/10">
           No students found.
-        </div>
-      ) : Object.keys(attendance).length === 0 ? (
-        <div className="text-center text-white py-8 bg-zinc-900/60 rounded-lg border border-white/10">
-          No attendance found for this batch.
         </div>
       ) : (
         <div className="bg-zinc-900/80 overflow-x-auto border border-white/10 rounded-lg">
@@ -189,42 +196,54 @@ export default function AttendancePage() {
                 <th className="px-6 py-3 whitespace-nowrap">Name</th>
                 <th className="px-6 py-3 whitespace-nowrap">Roll</th>
                 <th className="px-6 py-3 whitespace-nowrap">Branch</th>
-
                 <th className="px-6 py-3 whitespace-nowrap text-center">
                   Attendance
                 </th>
               </tr>
             </thead>
             <tbody className="text-white divide-y divide-white/10">
-              {students.map((student) => (
-                <tr key={student._id} className="hover:bg-white/10 transition">
-                  <td className="px-6 py-3">{student.name}</td>
-                  <td className="px-6 py-3">{student.roll}</td>
-                  <td className="px-6 py-3">{student.branch}</td>
-                  <td className="px-6 py-3 text-center">
-                    <div className="flex items-center justify-center gap-4">
-                      <div
-                        className={`w-5 h-5 rounded-full ${
-                          attendance[student._id] === "present"
-                            ? "bg-green-500"
-                            : "bg-gray-700"
-                        }`}
-                        title="Present"
-                      />
-                      <div
-                        className={`w-5 h-5 rounded-full ${
-                          attendance[student._id] === "absent"
-                            ? "bg-red-500"
-                            : "bg-gray-700"
-                        }`}
-                        title="Absent"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {students.map((student) => {
+                const status = attendanceList.find(
+                  (a) => a.studentId === student._id
+                )?.isPresent;
+
+                console.log("Attendance Status for", student._id, ":", status);
+
+                return (
+                  <tr
+                    key={student._id}
+                    className="hover:bg-white/10 transition"
+                  >
+                    <td className="px-6 py-3">{student.name}</td>
+                    <td className="px-6 py-3">{student.roll}</td>
+                    <td className="px-6 py-3">{student.branch}</td>
+                    <td className="px-6 py-3 text-center">
+                      <div className="flex items-center justify-center gap-4">
+                        <div
+                          className={`w-5 h-5 rounded-full ${
+                            status === true ? "bg-green-500" : "bg-gray-700"
+                          }`}
+                          title="Present"
+                        />
+                        <div
+                          className={`w-5 h-5 rounded-full ${
+                            status === false ? "bg-red-500" : "bg-gray-700"
+                          }`}
+                          title="Absent"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+
+          {attendanceList.length === 0 && (
+            <div className="text-center text-white py-6">
+              No attendance found for this batch.
+            </div>
+          )}
         </div>
       )}
 

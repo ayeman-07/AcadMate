@@ -79,7 +79,10 @@ export async function GET(req: NextRequest) {
 
     console.log("session:", session);
 
-    if (!session?.user || session.user.role !== "professor") {
+    if (
+      !session?.user ||
+      (session.user.role !== "professor" && session.user.role !== "admin")
+    ) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
     await connectToDB();
@@ -89,6 +92,7 @@ export async function GET(req: NextRequest) {
     const semester = searchParams.get("semester");
     const date = searchParams.get("date"); 
 
+
     if (!batchCode || !semester || !date) {
       return NextResponse.json(
         { error: "Missing batchCode, semester, or date" },
@@ -96,8 +100,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const [branch, section] = batchCode.split("-");
-    if (!branch || !section) {
+    const branch = batchCode.slice(0, 3).toUpperCase();
+    if (!branch) {
       return NextResponse.json(
         { error: "Invalid batchCode format" },
         { status: 400 }
@@ -107,7 +111,6 @@ export async function GET(req: NextRequest) {
 
     const students = await Student.find({
       branch,
-      section,
       currSem: Number(semester),
     }).lean();
 
