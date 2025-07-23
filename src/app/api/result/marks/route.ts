@@ -35,12 +35,16 @@ export async function POST(req: NextRequest) {
         batchCode: string;
         isUpdated: boolean;
       };
+      type Entry = {
+        studentId: string;
+        marks: number;
+      };
 
-      const newResults: NewResultEntry[] = entries.map((entry: any) => ({
+      const newResults: NewResultEntry[] = (entries as Entry[]).map((entry) => ({
         student: entry.studentId,
         exam,
         subject: subjectName,
-        marksObtained: entry.marks || 0,
+        marksObtained: entry.marks ?? 0,
         sem,
         batchCode,
         isUpdated: false,

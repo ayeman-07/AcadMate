@@ -27,39 +27,55 @@ export default function StudentExcelUpload() {
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    interface ExcelRow {
+      [key: string]: string | number | undefined | null;
+      "Name"?: string;
+      "First Name"?: string;
+      "Last Name"?: string;
+      "Email"?: string;
+      "Password"?: string;
+      "Enrollment Number"?: string;
+      "Enrollment No."?: string;
+    }
+    const jsonData: ExcelRow[] = XLSX.utils.sheet_to_json<ExcelRow>(worksheet);
 
-    const parsedStudents = jsonData.map((row) => {
-      const r = row as Record<string, any>;
-      const roll =
-        r["Enrollment Number"]?.toString().trim().toUpperCase() ||
-        r["Enrollment No."]?.toString().trim().toUpperCase();
-      const name =
-        r["Name"]?.toString().trim() ||
-        `${r["First Name"] || ""} ${r["Last Name"] || ""}`.trim();
-      const email: string = r["Email"]?.toString().trim();
-      const password: string =
-        r["Password"]?.toString().trim() || roll?.toLowerCase();
-      const batchCode = roll.substring(0, 6);
-      const branchCode = roll.substring(4, 6);
-      const branch = branchCode === "CS" ? "CS" : "EC";
+    const parsedStudents = jsonData
+      .map((row) => {
+        const r = row as ExcelRow;
+        const roll =
+          r["Enrollment Number"]?.toString().trim().toUpperCase() ||
+          r["Enrollment No."]?.toString().trim().toUpperCase() ||
+          "";
+        if (!roll) return null; // skip rows without roll
 
-      let section = "A1";
-      const rollNum = parseInt(roll.slice(-2));
-      if (branch === "CS") section = rollNum <= 30 ? "A1" : "A2";
-      else if (branch === "EC") section = rollNum <= 30 ? "B1" : "B2";
+        const name =
+          r["Name"]?.toString().trim() ||
+          `${r["First Name"] || ""} ${r["Last Name"] || ""}`.trim() ||
+          "Unknown";
+        const email = r["Email"]?.toString().trim() || "";
+        const password =
+          r["Password"]?.toString().trim() || roll.toLowerCase();
+        const batchCode = roll.substring(0, 6);
+        const branchCode = roll.substring(4, 6);
+        const branch = branchCode === "CS" ? "CS" : "EC";
 
-      return {
-        name,
-        roll,
-        email,
-        password,
-        batchCode,
-        branch,
-        section,
-        currSem,
-      };
-    });
+        let section = "A1";
+        const rollNum = parseInt(roll.slice(-2));
+        if (branch === "CS") section = rollNum <= 30 ? "A1" : "A2";
+        else if (branch === "EC") section = rollNum <= 30 ? "B1" : "B2";
+
+        return {
+          name,
+          roll,
+          email,
+          password,
+          batchCode,
+          branch,
+          section,
+          currSem,
+        };
+      })
+      .filter((student): student is Student => !!student);
 
     setStudents(parsedStudents);
   };

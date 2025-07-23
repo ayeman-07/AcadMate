@@ -91,11 +91,11 @@ export default function MarksEntryPage() {
 
         const rawText = await resultRes.text();
         if (rawText) {
-          let resultData: any;
+          let resultData;
           try {
             resultData = JSON.parse(rawText);
           } catch (err) {
-            console.error("Failed to parse result JSON:", rawText);
+            console.error("Failed to parse result JSON:", err);
             throw new Error("Invalid result response");
           }
 
@@ -187,6 +187,7 @@ export default function MarksEntryPage() {
         toast.error("Failed to save marks");
       }
     } catch (error) {
+      console.error("Failed to submit marks:", error);
       toast.error("Something went wrong.");
     }
   };

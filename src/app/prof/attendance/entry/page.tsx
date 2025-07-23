@@ -70,40 +70,41 @@ export default function AttendanceEntryPage() {
     fetchStudents();
   }, [subjectName, batchCode, semester]);
 
-  const fetchAttendance = async (selectedDate: Date) => {
-    try {
-      const res = await fetch(
-        `/api/attendance?batchCode=${batchCode}&semester=${semester}&date=${
-          selectedDate.toISOString().split("T")[0]
-        }`
-      );
-      const data = await res.json();
-
-      if (data.success && Array.isArray(data.attendance)) {
-        const newAttendance: { [studentId: string]: "present" | "absent" } = {};
-        data.attendance.forEach((record: any) => {
-          newAttendance[record.studentId._id || record.studentId] = record.isPresent
-            ? "present"
-            : "absent";
-        });
-        setAttendance(newAttendance);
-      } else {
-        const today = new Date();
-        if (selectedDate <= today) {
-          const defaultAttendance: { [id: string]: "absent" } = {};
-          students.forEach((s) => (defaultAttendance[s._id] = "absent"));
-          setAttendance(defaultAttendance);
-        } else {
-          setAttendance({});
-        }
-      }
-    } catch (err) {
-      console.error("Error fetching attendance:", err);
-      setAttendance({});
-    }
-  };
+  
 
   useEffect(() => {
+    const fetchAttendance = async (selectedDate: Date) => {
+      try {
+        const res = await fetch(
+          `/api/attendance?batchCode=${batchCode}&semester=${semester}&date=${
+            selectedDate.toISOString().split("T")[0]
+          }`
+        );
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.attendance)) {
+          const newAttendance: { [studentId: string]: "present" | "absent" } =
+            {};
+          data.attendance.forEach((record: any) => {
+            newAttendance[record.studentId._id || record.studentId] =
+              record.isPresent ? "present" : "absent";
+          });
+          setAttendance(newAttendance);
+        } else {
+          const today = new Date();
+          if (selectedDate <= today) {
+            const defaultAttendance: { [id: string]: "absent" } = {};
+            students.forEach((s) => (defaultAttendance[s._id] = "absent"));
+            setAttendance(defaultAttendance);
+          } else {
+            setAttendance({});
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching attendance:", err);
+        setAttendance({});
+      }
+    };
     if (students.length > 0) {
       fetchAttendance(date);
     }

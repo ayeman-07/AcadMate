@@ -25,8 +25,7 @@ export const calculateSemesterResult = async (
   }).populate("subject");
 
   const subjectMap = new Map<string, { marks: number; credit: number }>();
-
-  for (const subject of assignment.subjects as any[]) {
+  for (const subject of assignment.subjects as { _id: any; credits: number }[]) {
     const subjectResults = results.filter((r) =>
       r.subject._id.equals(subject._id)
     );

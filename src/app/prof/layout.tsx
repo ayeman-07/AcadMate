@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   BarChart2,
-  Users,
+  // Users,
   Settings,
-  LogOut,
+  // LogOut,
   Home,
 } from "lucide-react";
 import { Toaster } from "sonner";
