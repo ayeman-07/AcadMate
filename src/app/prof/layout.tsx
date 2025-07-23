@@ -7,11 +7,12 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   BarChart2,
-  Users,
+  // Users,
   Settings,
-  LogOut,
+  // LogOut,
   Home,
 } from "lucide-react";
+import { Toaster } from "sonner";
 import LogoutButton from "@/components/Logout";
 
 const navigation = [
@@ -64,8 +65,11 @@ export default function ProfessorLayout({
         </div>
 
         {/* Main content */}
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+        <div className="flex-1 overflow-y-auto p-6">
+          {children}
+          <Toaster position="top-right" richColors closeButton />
+        </div>
       </div>
     </div>
   );
-} 
+}

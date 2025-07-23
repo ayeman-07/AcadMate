@@ -20,30 +20,12 @@ export default function ProfessorManagement() {
   const [loading, setLoading] = useState(false);
   const [department, setDepartment] = useState("");
   const [designation, setDesignation] = useState("");
-  const [subject, setSubject] = useState("");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const router = useRouter();
 
-  const fetchProfessors = async () => {
-    setLoading(true);
-    const params = new URLSearchParams({
-      page: page.toString(),
-      ...(department && { department }),
-      ...(designation && { designation }),
-      ...(subject && { subject }),
-      ...(search && { search }),
-    });
-
-    const res = await fetch(`/api/user-mgmt/professor?${params}`);
-    const data = await res.json();
-
-    if (res.ok) setProfessors(data.professors);
-    else alert("Failed to fetch professors");
-
-    setLoading(false);
-  };
+  
 
   const debouncedSetSearch = useMemo(() => {
     return debounce((value: string) => {
@@ -52,8 +34,26 @@ export default function ProfessorManagement() {
   }, []);
 
   useEffect(() => {
+    const fetchProfessors = async () => {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        ...(department && { department }),
+        ...(designation && { designation }),
+        ...(search && { search }),
+      });
+
+      const res = await fetch(`/api/user-mgmt/professor?${params}`);
+      const data = await res.json();
+
+      if (res.ok) setProfessors(data.professors);
+      else alert("Failed to fetch professors");
+
+      setLoading(false);
+    };
+
     fetchProfessors();
-  }, [department, designation, subject, search, page]);
+  }, [department, designation, search, page]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this professor?")) return;
@@ -112,13 +112,7 @@ export default function ProfessorManagement() {
           <option value="Associate Professor">Associate Professor</option>
           <option value="Professor">Professor</option>
         </select>
-        <input
-          type="text"
-          placeholder="Search by subject..."
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 text-zinc-100 px-4 py-2 rounded-md w-full sm:w-60 placeholder-zinc-400"
-        />
+       
       </div>
 
       <div className="overflow-x-auto border border-zinc-800 rounded-md shadow-sm">

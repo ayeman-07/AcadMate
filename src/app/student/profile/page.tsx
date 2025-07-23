@@ -11,6 +11,7 @@ import {
   Loader2,
   AlertTriangle,
 } from "lucide-react";
+import Image from "next/image";
 
 type Student = {
   name: string;
@@ -48,8 +49,12 @@ export default function ProfilePage() {
           phone: data.user.phone,
           address: data.user.address,
         });
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
       } finally {
         setLoading(false);
       }
@@ -82,7 +87,7 @@ export default function ProfilePage() {
       <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 md:p-10 flex flex-col lg:flex-row gap-10 items-start">
         <div className="flex flex-col items-center gap-6 w-full lg:w-1/3">
           <div className="relative w-36 h-36 rounded-full overflow-hidden border-4 border-indigo-600">
-            <img
+            <Image
               src={student.image || "/avatar-placeholder.png"}
               alt="Student Avatar"
               className="w-full h-full object-cover"

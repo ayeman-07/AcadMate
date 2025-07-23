@@ -1,83 +1,98 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import Exam from "@/models/exams/exam.model";
 import authOptions from "@/lib/authOptions";
 import { connectToDB } from "@/lib/db";
+import Exam from "@/models/exams/exam.model";
 
-export async function GET() {
+// GET /api/exam or /api/exam?id=<examId>
+export async function GET(req: NextRequest) {
+  await connectToDB();
+
+  const searchParams = req.nextUrl.searchParams;
+  const examId = searchParams.get("id");
   try {
-    await connectToDB();
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (examId) {
+      const exam = await Exam.findById(examId).populate("subjects.professor");
+      if (!exam) {
+        return NextResponse.json(
+          { message: "Exam not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({ exam }, { status: 200 });
+    } else {
+      const exams = await Exam.find()
+        .sort({ createdAt: -1 })
+        .populate("subjects.professor");
+      return NextResponse.json({ exams }, { status: 200 });
     }
-
-    const exams = await Exam.find()
-      .populate("paperSetter", "name email")
-      .sort({ examDate: -1 });
-
-    return NextResponse.json(exams);
   } catch (error) {
-    console.error("Error fetching exams:", error);
+    console.error("GET Exam Error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch exams" },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
 
-export async function POST(req: Request) {
+// POST /api/exam
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "admin") {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+  await connectToDB();
+
   try {
-    await connectToDB();
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
+
     const {
-      title,
-      subject,
       examType,
       semester,
-      department,
+      departments,
       maxMarks,
-      examDate,
+      startDate,
+      endDate,
       duration,
+      subjects, 
     } = body;
-
-    // Validate required fields
+    console.log(body)
     if (
-      !title ||
-      !subject ||
       !examType ||
       !semester ||
-      !department ||
+      !departments ||
       !maxMarks ||
-      !examDate ||
-      !duration
+      !startDate ||
+      !endDate ||
+      !duration ||
+      !subjects?.length
     ) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { message: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const exam = new Exam({
-      ...body,
-      paperSetter: session.user.id, // Set the paperSetter to the current user
+    const newExam = await Exam.create({
+      examType,
+      semester,
+      departments,
+      maxMarks,
+      startDate,
+      endDate,
+      duration,
+      subjects,
     });
 
-    await exam.save();
-
-    return NextResponse.json(exam, { status: 201 });
-  } catch (error) {
-    console.error("Error creating exam:", error);
     return NextResponse.json(
-      { error: "Failed to create exam" },
+      { message: "Exam created", exam: newExam },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("POST Exam Error:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
-} 
+}

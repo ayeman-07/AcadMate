@@ -3,47 +3,57 @@
 import React, { useEffect, useState } from "react";
 import DepartmentSection from "@/components/students/DepartmentSection";
 
-type Batches = {
-  [departmentName: string]: string[];
+type SemesterInfo = {
+  name: string;
+  department: string;
+  studentCount: number;
 };
+
+type Batches = {
+  [departmentName: string]: SemesterInfo[];
+};
+
+
 
 interface Semester {
   _id: string;
   name: string;
   department: string;
+  studentCount: number;
 }
 
 export default function Students() {
   const [batches, setBatches] = useState<Batches>({
     "COMPUTER SCIENCE": [],
     "ELECTRONICS & COMMUNICATION": [],
-    ALL: [],
   });
 
   useEffect(() => {
     const fetchAllSemesters = async () => {
       try {
         const res = await fetch("/api/sem");
-        const data: Semester[] = await res.json();
+        const data: Semester[] = await res.json(); // enriched: name, department, studentCount
 
-        const deptWise: Batches = {
-          "COMPUTER SCIENCE": [],
-          "ELECTRONICS & COMMUNICATION": [],
-        };
-        const allList: string[] = [];
+        const deptWise: Batches = {};
+        const allList: SemesterInfo[] = [];
 
         data.forEach((sem) => {
+          const entry = {
+            name: sem.name,
+            department: sem.department,
+            studentCount: sem.studentCount,
+          };
+
           if (!deptWise[sem.department]) {
             deptWise[sem.department] = [];
           }
 
-          deptWise[sem.department].push(sem.name);
-          allList.push(`${sem.name}`);
+          deptWise[sem.department].push(entry);
+          allList.push(entry);
         });
 
         setBatches({
           ...deptWise,
-          ALL: allList,
         });
       } catch (error) {
         console.error("Failed to load semesters:", error);
@@ -52,7 +62,6 @@ export default function Students() {
 
     fetchAllSemesters();
   }, []);
-
 
   return (
     <div className="bg-zinc-900/70 backdrop-blur-md rounded-xl border border-white/20 w-full h-[90vh] flex flex-col text-zinc-200 overflow-hidden">
@@ -70,6 +79,7 @@ export default function Students() {
               title={dept}
               batches={batches}
               setBatches={setBatches}
+              section="students"
             />
           ))}
         </div>

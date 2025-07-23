@@ -1,7 +1,6 @@
 import React, {
   FC,
   useState,
-  useEffect,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -11,26 +10,27 @@ import SemesterCard from "@/components/students/SemesterCard";
 
 // Backend Semester shape
 interface Semester {
-  _id: string;
   name: string;
   department: string;
-  __v?: number;
+  studentCount: number;
 }
 
 type Batches = {
-  [departmentName: string]: string[];
+  [departmentName: string]: Semester[];
 };
 
 interface DepartmentSectionProps {
   title: string;
   batches: Batches;
   setBatches: Dispatch<SetStateAction<Batches>>;
+  section: string;
 }
 
 const DepartmentSection: FC<DepartmentSectionProps> = ({
   title,
   batches,
   setBatches,
+  section
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,12 +50,16 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         console.error("Failed to add semester:", errorData.error);
         return false;
       }
+
+      const newSem: Semester = {
+        name,
+        department,
+        studentCount: 0,
+      };
+
       setBatches((prev) => {
-        const updatedDeptList = [...(prev[title] || []), name];
-        const updatedAllList = [
-          ...(prev["ALL"] || []),
-          `${name}`,
-        ];
+        const updatedDeptList = [...(prev[title] || []), newSem];
+        const updatedAllList = [...(prev["ALL"] || []), newSem];
 
         return {
           ...prev,
@@ -64,7 +68,7 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         };
       });
 
-      return res.ok;
+      return true;
     } catch (err) {
       console.error("Failed to add semester:", err);
       return false;
@@ -77,15 +81,14 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
   ) => {
     setBatches((prev) => {
       if (department === "ALL") {
-        // e.g., semesterToDelete = "COMPUTER SCIENCE - Sem 2"
         const [actualDept, ...semParts] = semesterToDelete.split(" - ");
         const actualSem = semParts.join(" - ");
 
         const updatedDeptList =
-          prev[actualDept]?.filter((s) => s !== actualSem) || [];
+          prev[actualDept]?.filter((s) => s.name !== actualSem) || [];
 
         const updatedAllList = prev["ALL"].filter(
-          (s) => s !== semesterToDelete
+          (s) => `${s.department} - ${s.name}` !== semesterToDelete
         );
 
         return {
@@ -95,7 +98,8 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         };
       } else {
         const updatedList =
-          prev[department]?.filter((s) => s !== semesterToDelete) || [];
+          prev[department]?.filter((s) => s.name !== semesterToDelete) || [];
+
         return {
           ...prev,
           [department]: updatedList,
@@ -103,6 +107,7 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
       }
     });
   };
+
 
   const deleteSemester = async (department: string, semesterName: string) => {
     try {
@@ -149,25 +154,27 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <h2 className="text-lg sm:text-xl font-semibold text-white">{title}</h2>
-        <div className="flex items-center gap-4">
-          {title !== "ALL" && (
-            <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsModalOpen(true);
-            }}
-            className="bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-2 focus:outline-none"
-          >
-            <Plus className="w-4 h-4" />
-            Add Semester
-          </button>
-          )}
-          <ChevronDown
-            className={`w-5 h-5 text-zinc-300 transition-transform duration-300 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </div>
+        {section === "students" && (
+          <div className="flex items-center gap-4">
+            {title !== "ALL" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
+                className="bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-2 focus:outline-none"
+              >
+                <Plus className="w-4 h-4" />
+                Add Semester
+              </button>
+            )}
+            <ChevronDown
+              className={`w-5 h-5 text-zinc-300 transition-transform duration-300 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+        )}
       </div>
 
       {/* Body */}
@@ -175,12 +182,17 @@ const DepartmentSection: FC<DepartmentSectionProps> = ({
         <div className="px-4 py-4 border-t border-zinc-800 transition-all duration-300">
           {batches[title]?.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {batches[title].map((semester) => (
+              {batches[title].map((semesterObj) => (
                 <SemesterCard
-                  key={`${title}-${semester}`}
+                  key={`${title}-${semesterObj.name}-${semesterObj.department}`}
                   department={title}
-                  semester={semester}
+                  semester={semesterObj.name}
+                  studentCount={semesterObj.studentCount}
+                  actualDepartment={
+                    title === "ALL" ? semesterObj.department : undefined
+                  }
                   onDelete={deleteSemester}
+                  section={section}
                 />
               ))}
             </div>

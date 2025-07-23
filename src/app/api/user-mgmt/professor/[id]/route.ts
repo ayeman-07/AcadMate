@@ -1,15 +1,18 @@
 import { connectToDB } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import Professor from "@/models/professor/professor.model";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
 ) {
+  const pathname = req.nextUrl.pathname;
+  const id = pathname.split("/").pop();
   await connectToDB();
 
   try {
-    const professor = await Professor.findById(params.id);
+
+    console.log("Fetching professor with ID:", id);
+    const professor = await Professor.findById(id);
     if (!professor) {
       return new NextResponse("Professor not found", { status: 404 });
     }

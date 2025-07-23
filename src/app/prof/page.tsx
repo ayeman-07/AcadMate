@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -10,35 +10,35 @@ import {
   AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { ExamSelector, ExamType } from "@/components/professor/ExamSelector";
-import { StudentMarksTable } from "@/components/professor/StudentMarksTable";
+// import { ExamType } from "@/components/professor/ExamSelector";
+// import { StudentMarksTable } from "@/components/professor/StudentMarksTable";
 
 // Hardcoded data for demonstration
-const sections = [
-  { id: "1", name: "Section A", semester: 3, department: "CSE" },
-  { id: "2", name: "Section B", semester: 3, department: "CSE" },
-  { id: "3", name: "Section A", semester: 5, department: "ECE" },
-];
+// const sections = [
+//   { id: "1", name: "Section A", semester: 3, department: "CSE" },
+//   { id: "2", name: "Section B", semester: 3, department: "CSE" },
+//   { id: "3", name: "Section A", semester: 5, department: "ECE" },
+// ];
 
-const students = [
-  {
-    id: "1",
-    name: "John Doe",
-    rollNo: "CSE2023001",
-    section: "Section A",
-    semester: 3,
-    department: "CSE",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    rollNo: "CSE2023002",
-    section: "Section A",
-    semester: 3,
-    department: "CSE",
-  },
-  // Add more students as needed
-];
+// const students = [
+//   {
+//     id: "1",
+//     name: "John Doe",
+//     rollNo: "CSE2023001",
+//     section: "Section A",
+//     semester: 3,
+//     department: "CSE",
+//   },
+//   {
+//     id: "2",
+//     name: "Jane Smith",
+//     rollNo: "CSE2023002",
+//     section: "Section A",
+//     semester: 3,
+//     department: "CSE",
+//   },
+//   // Add more students as needed
+// ];
 
 // Mock data for demonstration
 const stats = [
@@ -90,26 +90,26 @@ const recentActivities = [
 ];
 
 export default function DashboardOverview() {
-  const [selectedSection, setSelectedSection] = useState(sections[0].id);
-  const [selectedExam, setSelectedExam] = useState<ExamType>("quiz1");
-  const [studentMarks, setStudentMarks] = useState<Record<string, number>>({});
+  // const [selectedSection, setSelectedSection] = useState(sections[0].id);
+  // const [selectedExam, setSelectedExam] = useState<ExamType>("quiz1");
+  // const [studentMarks, setStudentMarks] = useState<Record<string, number>>({});
 
-  const handleMarkChange = (studentId: string, marks: number) => {
-    setStudentMarks((prev) => ({
-      ...prev,
-      [studentId]: marks,
-    }));
-  };
+  // const handleMarkChange = (studentId: string, marks: number) => {
+  //   setStudentMarks((prev) => ({
+  //     ...prev,
+  //     [studentId]: marks,
+  //   }));
+  // };
 
-  const handleSubmitMarks = () => {
-    // Here you would typically make an API call to save the marks
-    console.log("Submitting marks:", {
-      examType: selectedExam,
-      sectionId: selectedSection,
-      marks: studentMarks,
-    });
-    alert("Marks submitted successfully!");
-  };
+  // const handleSubmitMarks = () => {
+  //   // Here you would typically make an API call to save the marks
+  //   // console.log("Submitting marks:", {
+  //   //   examType: selectedExam,
+  //   //   sectionId: selectedSection,
+  //   //   marks: studentMarks,
+  //   // });
+  //   alert("Marks submitted successfully!");
+  // };
 
   return (
     <div className="space-y-6">

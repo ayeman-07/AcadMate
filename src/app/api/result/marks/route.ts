@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
     console.log("[POST] Parsing request body...");
     const body = await req.json();
     console.log("[POST] Request body:", body);
-
-    const { exam, sem, subjectName, batchCode, entries } = body;
+    // btachId
+    const { exam, sem, subjectName, batchCode, entries  } = body;
 
     if (!exam || !sem || !subjectName || !batchCode || !entries?.length) {
       console.error("[POST] Invalid payload:", body);
@@ -26,11 +26,25 @@ export async function POST(req: NextRequest) {
 
     if (!anyResultExists) {
       console.log("[POST] No existing results found. Inserting new entries...");
-      const newResults = entries.map((entry: any) => ({
+      type NewResultEntry = {
+        student: string;
+        exam: string;
+        subject: string;
+        marksObtained: number;
+        sem: string;
+        batchCode: string;
+        isUpdated: boolean;
+      };
+      type Entry = {
+        studentId: string;
+        marks: number;
+      };
+
+      const newResults: NewResultEntry[] = (entries as Entry[]).map((entry) => ({
         student: entry.studentId,
         exam,
         subject: subjectName,
-        marksObtained: entry.marks || 0,
+        marksObtained: entry.marks ?? 0,
         sem,
         batchCode,
         isUpdated: false,
@@ -44,7 +58,24 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("[POST] Existing results found. Processing updates...");
-    const updates = entries.map(async (entry: any) => {
+    interface Entry {
+      studentId: string;
+      marks: number;
+      isUpdated: boolean;
+    }
+
+    interface ResultDocument {
+      student: string;
+      subject: string;
+      exam: string;
+      sem: string;
+      batchCode: string;
+      marksObtained: number;
+      isUpdated: boolean;
+      save: () => Promise<ResultDocument>;
+    }
+
+    const updates: Promise<ResultDocument | null>[] = (entries as Entry[]).map(async (entry: Entry): Promise<ResultDocument | null> => {
       console.log(
         `[POST] Processing entry for studentId=${entry.studentId}, isUpdated=${entry.isUpdated}`
       );
@@ -56,7 +87,7 @@ export async function POST(req: NextRequest) {
         return null;
       }
 
-      const result = await Result.findOne({
+      const result: ResultDocument | null = await Result.findOne({
         student: entry.studentId,
         subject: subjectName,
         exam,

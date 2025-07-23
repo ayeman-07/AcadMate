@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Edit, Trash2, Plus } from "lucide-react";
+import { Search, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import StudentTableSkeleton from "./StudentListSkeleton";
 
@@ -37,7 +37,9 @@ export default function StudentListPanel({ department, semester }: Props) {
 
   const isAllDepartments = department.toLowerCase() === "all";
 
-  const fetchStudents = async () => {
+  // import { useCallback } from "react"; // Moved to top-level imports
+
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -49,25 +51,23 @@ export default function StudentListPanel({ department, semester }: Props) {
           department.toLowerCase() !== "all" && { sem: semester }),
         ...(department.toLowerCase() === "all" &&
           semFilter && { sem: semFilter }),
-        // You can optionally add section filter here if needed like: section: "1"
       });
-
-      console.log("Fetching students with params:", params.toString());
 
       const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
       const data = await res.json();
       setStudents(data.students);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
+      console.error("Failed to fetch students:", err);
       toast.error("Failed to fetch students");
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, department, semester, semFilter]);
 
   useEffect(() => {
     fetchStudents();
-  }, [department, semester, search, semFilter, page]);
+  }, [fetchStudents]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this student?")) return;
@@ -78,6 +78,7 @@ export default function StudentListPanel({ department, semester }: Props) {
       toast.success("Student deleted");
       fetchStudents();
     } catch (err) {
+      console.error("Failed to delete student:", err);
       toast.error("Failed to delete student");
     }
   };
@@ -164,7 +165,13 @@ export default function StudentListPanel({ department, semester }: Props) {
                 <tr
                   key={student._id}
                   onClick={() =>
-                    router.push(`/admin/users/students/${student._id}`)
+                    router.push(
+                      `/admin/users/students/${encodeURIComponent(
+                        department.toLowerCase()
+                      )}/${encodeURIComponent(
+                        semester || semFilter || "unknown"
+                      )}/${student._id}`
+                    )
                   }
                   className="hover:bg-white/10 transition cursor-pointer"
                 >
@@ -183,7 +190,7 @@ export default function StudentListPanel({ department, semester }: Props) {
                       }}
                       className="text-red-500 hover:text-red-600 transition"
                     >
-                      <Trash2 className="w-5 h-5   inline-block" />
+                      <Trash2 className="w-5 h-5 inline-block" />
                     </button>
                   </td>
                 </tr>

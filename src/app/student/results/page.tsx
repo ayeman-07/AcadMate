@@ -5,14 +5,14 @@ import { ChevronDown } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-interface SubjectResult {
-  subject: {
-    name: string;
-    code: string;
-  };
-  exam: string;
-  marksObtained: number;
-}
+// interface SubjectResult {
+//   subject: {
+//     name: string;
+//     code: string;
+//   };
+//   exam: string;
+//   marksObtained: number;
+// }
 
 interface MappedSubject {
   subject: string;

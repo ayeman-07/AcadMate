@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 interface Student {
   _id: string;
@@ -24,10 +24,7 @@ const EXAMS = [
 ];
 
 export default function ViewResultPage() {
-  const searchParams = useSearchParams();
-  const subjectName = searchParams.get("subject");
-  const batchCode = searchParams.get("batchCode");
-  const semester = searchParams.get("semester");
+  const { subjectName, batchCode, semester } = useParams();
 
   const [students, setStudents] = useState<Student[]>([]);
   const [results, setResults] = useState<Record<string, Result[]>>({});
@@ -42,7 +39,8 @@ export default function ViewResultPage() {
         return;
       }
 
-      const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
+      const batchCodeStr = Array.isArray(batchCode) ? batchCode.join("") : batchCode;
+      const modifiedBatchCode = batchCodeStr.replace("-", `${semester}0`);
 
       console.log("Fetching with:", { subjectName, modifiedBatchCode, semester });
       setLoading(true);
@@ -75,10 +73,11 @@ export default function ViewResultPage() {
           throw new Error("Empty response from fetch-marks API.");
         }
 
-        let resultData: any;
+        let resultData: { results?: Result[]; [key: string]: unknown };
         try {
           resultData = JSON.parse(rawText);
         } catch (jsonErr) {
+          console.error("Failed to parse JSON:", jsonErr);
           console.error("JSON parse error:", rawText);
           throw new Error("Invalid JSON response from server.");
         }
@@ -96,9 +95,13 @@ export default function ViewResultPage() {
         }
 
         setResults(grouped);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching:", err);
-        setError(err.message || "Unknown error");
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
@@ -116,14 +119,16 @@ export default function ViewResultPage() {
     <div className="bg-black text-white min-h-screen p-6 space-y-8">
       <h2 className="text-3xl font-bold text-white/90 mb-6">📊 View Results</h2>
 
-      
-
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full bg-gray-950 text-gray-300 text-sm">
-          <thead className="bg-gray-800 text-gray-300 uppercase">
+        <table className="min-w-full bg-gray-950 text-gray-300 text-sm rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-gray-800 text-gray-300 uppercase text-xs tracking-wider">
             <tr>
-              <th className="px-6 py-3 border-b border-gray-700 text-left">Roll No</th>
-              <th className="px-6 py-3 border-b border-gray-700 text-left">Name</th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Roll No
+              </th>
+              <th className="px-6 py-3 border-b border-gray-700 text-left">
+                Name
+              </th>
               {EXAMS.map((exam) => (
                 <th
                   key={exam.key}
@@ -135,30 +140,53 @@ export default function ViewResultPage() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => {
-              const studentResults = results[student._id] || [];
-              return (
-                <tr
-                  key={student._id}
-                  className="border-b border-gray-800 transition hover:bg-gray-800"
+            {students.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={2 + EXAMS.length}
+                  className="px-6 py-8 text-center text-gray-400 italic border-t border-gray-800"
                 >
-                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.roll}</td>
-                  <td className="px-6 py-3 whitespace-nowrap text-left">{student.name}</td>
-                  {EXAMS.map((exam) => {
-                    const res = studentResults.find((r) => r.exam === exam.key);
-                    return (
-                      <td key={exam.key} className="px-6 py-3 text-center">
-                        {res ? (
-                          res.marksObtained
-                        ) : (
-                          <span className="text-yellow-400/80 font-semibold">Pending</span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+                  No student records found.
+                </td>
+              </tr>
+            ) : (
+              students.map((student) => {
+                const studentResults = results[student._id] || [];
+
+                return (
+                  <tr
+                    key={student._id}
+                    className="border-b border-gray-800 transition-all duration-150 hover:bg-gray-800"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-left">
+                      {student.roll}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-left">
+                      {student.name}
+                    </td>
+                    {EXAMS.map((exam) => {
+                      const res = studentResults.find(
+                        (r) => r.exam === exam.key
+                      );
+
+                      return (
+                        <td key={exam.key} className="px-6 py-4 text-center">
+                          {res ? (
+                            <span className="text-white">
+                              {res.marksObtained}
+                            </span>
+                          ) : (
+                            <span className="text-yellow-400 font-semibold">
+                              Pending
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

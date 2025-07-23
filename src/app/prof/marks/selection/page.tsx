@@ -35,9 +35,13 @@ export default function SubjectSelectionPage() {
         const data = await res.json();
 
         setAssignments(data);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Fetch error:", err);
-        setError(err.message || "Unknown error");
+        setError(
+          typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message?: unknown }).message)
+            : "Unknown error"
+        );
       } finally {
         setLoading(false);
       }
