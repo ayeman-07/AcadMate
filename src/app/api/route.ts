@@ -232,7 +232,6 @@ export async function POST() {
   
 
   try {
-    const results = [];
 
     for (const assign of assignments) {
       const professor = await Professor.findOne({ name: assign.professorName });

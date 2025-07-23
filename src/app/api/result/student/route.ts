@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       { results, student, batchCode },
       { status: 200 }
     );  
-  } catch (err: any) {
+  } catch (err) {
     console.error("Error generating marksheet:", err);
     return NextResponse.json(
       { error: "Internal Server Error" },

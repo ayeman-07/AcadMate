@@ -41,59 +41,60 @@ export default function StudentListPanel({ department, semester }: Props) {
   const [semFilter, setSemFilter] = useState("");
 
   const isAllDepartments = department.toLowerCase() === "all";
-
-  const fetchStudents = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: "10",
-        ...(search && { search }),
-        ...(department.toLowerCase() !== "all" && { department }),
-        ...(semester &&
-          department.toLowerCase() !== "all" && { sem: semester }),
-        ...(department.toLowerCase() === "all" && semFilter && { sem: semFilter }),
-      });
-
-      const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
-      const data = await res.json();
-      setStudents(data.students);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      toast.error("Failed to fetch students");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSubjects = async () => {
-    if (!department || !semester) return;
-
-    const numericSemester = semester.replace(/^sem/, "");
-
-    try {
-      const params = new URLSearchParams({
-        branch: department,
-        semester: numericSemester,
-      });
-
-      const res = await fetch(`/api/subject-allotment?${params.toString()}`);
-
-      if (!res.ok) throw new Error("Failed to fetch subjects");
-
-      const data = await res.json();
-      console.log("Subject Allotment Response:", data); // ✅ Log API response
-      setSubjects(data.subjects || []);
-    } catch (err) {
-      toast.error("Failed to fetch subjects");
-    }
-  };
+  
 
   useEffect(() => {
+    const fetchStudents = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: "10",
+          ...(search && { search }),
+          ...(department.toLowerCase() !== "all" && { department }),
+          ...(semester &&
+            department.toLowerCase() !== "all" && { sem: semester }),
+          ...(department.toLowerCase() === "all" &&
+            semFilter && { sem: semFilter }),
+        });
+
+        const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
+        const data = await res.json();
+        setStudents(data.students);
+        setTotalPages(data.totalPages || 1);
+      } catch (err) {
+        toast.error("Failed to fetch students");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchStudents();
   }, [department, semester, search, semFilter, page]);
 
   useEffect(() => {
+    const fetchSubjects = async () => {
+      if (!department || !semester) return;
+
+      const numericSemester = semester.replace(/^sem/, "");
+
+      try {
+        const params = new URLSearchParams({
+          branch: department,
+          semester: numericSemester,
+        });
+
+        const res = await fetch(`/api/subject-allotment?${params.toString()}`);
+
+        if (!res.ok) throw new Error("Failed to fetch subjects");
+
+        const data = await res.json();
+        console.log("Subject Allotment Response:", data); // ✅ Log API response
+        setSubjects(data.subjects || []);
+      } catch (err) {
+        toast.error("Failed to fetch subjects");
+      }
+    };
     if (department && semester) {
       fetchSubjects();
     }

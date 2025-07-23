@@ -22,7 +22,7 @@ function mapBranchToDepartment(branch: string): string {
 }
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     await connectToDB();
 

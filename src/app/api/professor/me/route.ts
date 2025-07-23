@@ -17,6 +17,7 @@ export async function GET() {
     }
     return Response.json(professor);
   } catch (err) {
+    console.error("Error fetching professor:", err);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

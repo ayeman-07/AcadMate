@@ -3,9 +3,7 @@ import SubjectAssignment from "@/models/exams/subjectassignment.model";
 import Student from "@/models/student/student.model";
 import Result from "@/models/exams/result.model";
 import SemesterResult from "@/models/exams/semesterResult.model";
-import Subject from "@/models/exams/subject.model";
-import { NextResponse } from "next/server";
-import { connectToDB } from "@/lib/db";
+
 
 export const calculateSemesterResult = async (
   studentId: string,

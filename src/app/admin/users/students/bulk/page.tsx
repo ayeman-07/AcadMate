@@ -165,7 +165,7 @@ export default function StudentUpload() {
                 </tr>
               </thead>
               <tbody>
-                {students.slice(0, 3).map((s: any, idx) => (
+                {students.slice(0, 3).map((s: Student, idx: number) => (
                   <tr
                     key={idx}
                     className="bg-gray-950 hover:bg-gray-800 transition"

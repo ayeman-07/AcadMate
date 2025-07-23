@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       .lean();
 
     const teachingAssignments = professor.subjectAllotment.map(
-      (allotment, index) => {
+      (allotment) => {
         const subject = matchedSubjects.find(
           (subj) =>
             subj.name === allotment.subjectName &&

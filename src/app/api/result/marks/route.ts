@@ -26,7 +26,17 @@ export async function POST(req: NextRequest) {
 
     if (!anyResultExists) {
       console.log("[POST] No existing results found. Inserting new entries...");
-      const newResults = entries.map((entry: any) => ({
+      type NewResultEntry = {
+        student: string;
+        exam: string;
+        subject: string;
+        marksObtained: number;
+        sem: string;
+        batchCode: string;
+        isUpdated: boolean;
+      };
+
+      const newResults: NewResultEntry[] = entries.map((entry: any) => ({
         student: entry.studentId,
         exam,
         subject: subjectName,
