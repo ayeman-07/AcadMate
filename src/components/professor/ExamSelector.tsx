@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
 
 export type ExamType = "quiz1" | "quiz2" | "midsem" | "endsem";

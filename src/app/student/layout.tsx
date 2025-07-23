@@ -11,7 +11,7 @@ import {
   FileText,
   BookOpen,
   User,
-  LogOut,
+  
 } from "lucide-react";
 
 const navigation = [
