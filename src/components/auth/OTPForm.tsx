@@ -151,7 +151,7 @@ export default function OTPForm({ email, role }: OTPFormProps) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-3 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-lg border border-red-200 dark:border-red-900"
+          className="p-3 text-sm text-red-400 bg-red-950/50 rounded-lg border border-red-900"
         >
           {error}
         </motion.div>
