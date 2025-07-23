@@ -86,6 +86,7 @@ export async function DELETE(
   context: { params: { id: string } }
 ) {
   const { params } = context;
+
   try {
     await connectToDB();
     const session = await getServerSession(authOptions);

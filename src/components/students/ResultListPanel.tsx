@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
