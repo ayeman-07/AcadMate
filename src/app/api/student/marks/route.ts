@@ -25,9 +25,23 @@ export const calculateSemesterResult = async (
   }).populate("subject");
 
   const subjectMap = new Map<string, { marks: number; credit: number }>();
-  for (const subject of assignment.subjects as { _id: any; credits: number }[]) {
-    const subjectResults = results.filter((r) =>
-      r.subject._id.equals(subject._id)
+  interface Subject {
+    _id: string;
+    credits: number;
+  }
+
+  interface ResultDoc {
+    subject: { _id: string };
+    exam: string;
+    marksObtained: number;
+  }
+
+  const subjects = assignment.subjects as Subject[];
+  const resultsArr = results as ResultDoc[];
+
+  for (const subject of subjects) {
+    const subjectResults = resultsArr.filter((r) =>
+      r.subject._id === subject._id
     );
 
     const quiz1 =
@@ -39,7 +53,7 @@ export const calculateSemesterResult = async (
     const endsem =
       subjectResults.find((r) => r.exam === "endsem")?.marksObtained || 0;
 
-    const total = quiz1 + midsem + quiz2 + endsem / 2; 
+    const total = quiz1 + midsem + quiz2 + endsem / 2;
     const credit = subject.credits;
 
     subjectMap.set(subject._id.toString(), { marks: total, credit });

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -10,15 +10,15 @@ import {
   AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { ExamType } from "@/components/professor/ExamSelector";
+// import { ExamType } from "@/components/professor/ExamSelector";
 // import { StudentMarksTable } from "@/components/professor/StudentMarksTable";
 
 // Hardcoded data for demonstration
-const sections = [
-  { id: "1", name: "Section A", semester: 3, department: "CSE" },
-  { id: "2", name: "Section B", semester: 3, department: "CSE" },
-  { id: "3", name: "Section A", semester: 5, department: "ECE" },
-];
+// const sections = [
+//   { id: "1", name: "Section A", semester: 3, department: "CSE" },
+//   { id: "2", name: "Section B", semester: 3, department: "CSE" },
+//   { id: "3", name: "Section A", semester: 5, department: "ECE" },
+// ];
 
 // const students = [
 //   {
@@ -92,7 +92,7 @@ const recentActivities = [
 export default function DashboardOverview() {
   // const [selectedSection, setSelectedSection] = useState(sections[0].id);
   // const [selectedExam, setSelectedExam] = useState<ExamType>("quiz1");
-  const [studentMarks, setStudentMarks] = useState<Record<string, number>>({});
+  // const [studentMarks, setStudentMarks] = useState<Record<string, number>>({});
 
   // const handleMarkChange = (studentId: string, marks: number) => {
   //   setStudentMarks((prev) => ({

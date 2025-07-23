@@ -1,16 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import Exam from "@/models/exams/exam.model";
-
 import authOptions from "@/lib/authOptions";
 import { connectToDB } from "@/lib/db";
 
-export async function GET(
-  _request: Request,
-  context: { params: { id: string } }
-) {
-  const { params } = context;
+export async function GET(_req: NextRequest) {
+  const searchParams = _req.nextUrl.searchParams;
+  const id = searchParams.get("id");
+
   try {
     await connectToDB();
     const session = await getServerSession(authOptions);
@@ -19,10 +17,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const exam = await Exam.findById(params.id).populate(
-      "paperSetter",
-      "name email"
-    );
+    const exam = await Exam.findById(id).populate("paperSetter", "name email");
 
     if (!exam) {
       return NextResponse.json({ error: "Exam not found" }, { status: 404 });
@@ -37,11 +32,11 @@ export async function GET(
     );
   }
 }
-export async function PUT(
-  request: Request,
-  context: { params: { id: string } }
-) {
-  const { params } = context;
+
+export async function PUT(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const id = searchParams.get("id");
+
   try {
     await connectToDB();
     const session = await getServerSession(authOptions);
@@ -50,13 +45,12 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const exam = await Exam.findById(params.id);
+    const exam = await Exam.findById(id);
 
     if (!exam) {
       return NextResponse.json({ error: "Exam not found" }, { status: 404 });
     }
 
-    // Check if the current user is the paperSetter
     if (exam.paperSetter.toString() !== session.user.id) {
       return NextResponse.json(
         { error: "You are not authorized to update this exam" },
@@ -64,9 +58,9 @@ export async function PUT(
       );
     }
 
-    const body = await request.json();
+    const body = await req.json();
     const updatedExam = await Exam.findByIdAndUpdate(
-      params.id,
+      id,
       { $set: body },
       { new: true }
     ).populate("paperSetter", "name email");
@@ -81,11 +75,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
-) {
-  const { params } = context;
+export async function DELETE(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const id = searchParams.get("id");
 
   try {
     await connectToDB();
@@ -95,13 +87,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const exam = await Exam.findById(params.id);
+    const exam = await Exam.findById(id);
 
     if (!exam) {
       return NextResponse.json({ error: "Exam not found" }, { status: 404 });
     }
 
-    // Check if the current user is the paperSetter
     if (exam.paperSetter.toString() !== session.user.id) {
       return NextResponse.json(
         { error: "You are not authorized to delete this exam" },
@@ -109,7 +100,7 @@ export async function DELETE(
       );
     }
 
-    await Exam.findByIdAndDelete(params.id);
+    await Exam.findByIdAndDelete(id);
 
     return NextResponse.json(
       { message: "Exam deleted successfully" },

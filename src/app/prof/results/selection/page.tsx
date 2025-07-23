@@ -29,8 +29,12 @@ export default function ResultsSelectionPage() {
         if (!res.ok) throw new Error("Failed to fetch assignments");
         const data = await res.json();
         setAssignments(data);
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
+      } catch (err) {
+        setError(
+          typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message?: unknown }).message)
+            : "Unknown error"
+        );
       } finally {
         setLoading(false);
       }

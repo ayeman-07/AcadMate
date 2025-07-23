@@ -58,7 +58,24 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("[POST] Existing results found. Processing updates...");
-    const updates = entries.map(async (entry: any) => {
+    interface Entry {
+      studentId: string;
+      marks: number;
+      isUpdated: boolean;
+    }
+
+    interface ResultDocument {
+      student: string;
+      subject: string;
+      exam: string;
+      sem: string;
+      batchCode: string;
+      marksObtained: number;
+      isUpdated: boolean;
+      save: () => Promise<ResultDocument>;
+    }
+
+    const updates: Promise<ResultDocument | null>[] = (entries as Entry[]).map(async (entry: Entry): Promise<ResultDocument | null> => {
       console.log(
         `[POST] Processing entry for studentId=${entry.studentId}, isUpdated=${entry.isUpdated}`
       );
@@ -70,7 +87,7 @@ export async function POST(req: NextRequest) {
         return null;
       }
 
-      const result = await Result.findOne({
+      const result: ResultDocument | null = await Result.findOne({
         student: entry.studentId,
         subject: subjectName,
         exam,

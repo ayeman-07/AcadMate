@@ -85,10 +85,18 @@ export default function AttendanceEntryPage() {
         if (data.success && Array.isArray(data.attendance)) {
           const newAttendance: { [studentId: string]: "present" | "absent" } =
             {};
-          data.attendance.forEach((record: any) => {
-            newAttendance[record.studentId._id || record.studentId] =
-              record.isPresent ? "present" : "absent";
-          });
+            interface AttendanceRecord {
+            studentId: string | { _id: string };
+            isPresent: boolean;
+            }
+
+            (data.attendance as AttendanceRecord[]).forEach((record: AttendanceRecord) => {
+            const studentId =
+              typeof record.studentId === "string"
+              ? record.studentId
+              : record.studentId._id;
+            newAttendance[studentId] = record.isPresent ? "present" : "absent";
+            });
           setAttendance(newAttendance);
         } else {
           const today = new Date();
@@ -108,7 +116,7 @@ export default function AttendanceEntryPage() {
     if (students.length > 0) {
       fetchAttendance(date);
     }
-  }, [date, students]);
+  }, [date, students, batchCode, semester]);
 
   const handleCalendarChange = (newDate: Date | null) => {
     if (newDate) {
