@@ -62,6 +62,7 @@ export default function StudentListPanel({ department, semester }: Props) {
         setStudents(data.students);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
+        console.error("Failed to fetch students:", err);
         toast.error("Failed to fetch students");
       } finally {
         setLoading(false);
@@ -91,6 +92,7 @@ export default function StudentListPanel({ department, semester }: Props) {
         console.log("Subject Allotment Response:", data); // ✅ Log API response
         setSubjects(data.subjects || []);
       } catch (err) {
+        console.error("Failed to fetch subjects:", err);
         toast.error("Failed to fetch subjects");
       }
     };

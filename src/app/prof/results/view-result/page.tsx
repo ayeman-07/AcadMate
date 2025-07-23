@@ -75,10 +75,11 @@ export default function ViewResultPage() {
           throw new Error("Empty response from fetch-marks API.");
         }
 
-        let resultData: any;
+        let resultData: { results?: Result[]; [key: string]: unknown };
         try {
           resultData = JSON.parse(rawText);
         } catch (jsonErr) {
+          console.error("Failed to parse JSON:", jsonErr);
           console.error("JSON parse error:", rawText);
           throw new Error("Invalid JSON response from server.");
         }
@@ -96,9 +97,13 @@ export default function ViewResultPage() {
         }
 
         setResults(grouped);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching:", err);
-        setError(err.message || "Unknown error");
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }

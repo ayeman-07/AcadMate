@@ -7,8 +7,6 @@ import {
   Users,
   FileText,
   Calendar,
-  BookOpen,
-  Bell,
   Settings,
   X,
   LucideIcon,

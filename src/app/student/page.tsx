@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { PieChart, BarChart2, Calendar, Clipboard, BookOpen } from "lucide-react";
 
 export default function StudentDashboard() {
