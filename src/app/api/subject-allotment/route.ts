@@ -25,6 +25,7 @@ export const GET = async (req: NextRequest) => {
       "subjectAllotment.branch": branch,
     });
 
+
     const subjectNamesSet = new Set<string>();
     professors.forEach((prof) => {
       prof.subjectAllotment?.forEach((allotment: SubjectAllotment) => {
@@ -33,6 +34,7 @@ export const GET = async (req: NextRequest) => {
         }
       });
     });
+
 
     // Fetch all matching subjects by name and validate semester by code
     const subjects = await Subject.find({
@@ -44,6 +46,7 @@ export const GET = async (req: NextRequest) => {
       const semesterDigit = code[3]; // E.g., '4' in CSE401
       return semesterDigit === semester;
     });
+
 
     return NextResponse.json({ subjects: filteredSubjects }, { status: 200 });
   } catch (error) {

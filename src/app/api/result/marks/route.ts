@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
     console.log("[POST] Parsing request body...");
     const body = await req.json();
     console.log("[POST] Request body:", body);
-
-    const { exam, sem, subjectName, batchCode, entries } = body;
+    // btachId
+    const { exam, sem, subjectName, batchCode, entries  } = body;
 
     if (!exam || !sem || !subjectName || !batchCode || !entries?.length) {
       console.error("[POST] Invalid payload:", body);
