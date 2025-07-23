@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
@@ -42,29 +41,7 @@ export default function StudentListPanel({ department, semester }: Props) {
 
   const isAllDepartments = department.toLowerCase() === "all";
 
-  const fetchStudents = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: "10",
-        ...(search && { search }),
-        ...(department.toLowerCase() !== "all" && { department }),
-        ...(semester &&
-          department.toLowerCase() !== "all" && { sem: semester }),
-        ...(department.toLowerCase() === "all" && semFilter && { sem: semFilter }),
-      });
-
-      const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
-      const data = await res.json();
-      setStudents(data.students);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      toast.error("Failed to fetch students");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   const fetchSubjects = async () => {
     if (!department || !semester) return;
@@ -85,11 +62,36 @@ export default function StudentListPanel({ department, semester }: Props) {
       console.log("Subject Allotment Response:", data); // ✅ Log API response
       setSubjects(data.subjects || []);
     } catch (err) {
+      console.error("Failed to fetch subjects:", err);
       toast.error("Failed to fetch subjects");
     }
   };
 
   useEffect(() => {
+    const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "10",
+        ...(search && { search }),
+        ...(department.toLowerCase() !== "all" && { department }),
+        ...(semester &&
+          department.toLowerCase() !== "all" && { sem: semester }),
+        ...(department.toLowerCase() === "all" && semFilter && { sem: semFilter }),
+      });
+
+      const res = await fetch(`/api/user-mgmt/student?${params.toString()}`);
+      const data = await res.json();
+      setStudents(data.students);
+      setTotalPages(data.totalPages || 1);
+    } catch (err) {
+      console.error("Failed to fetch students:", err);
+      toast.error("Failed to fetch students");
+    } finally {
+      setLoading(false);
+    }
+  };
     fetchStudents();
   }, [department, semester, search, semFilter, page]);
 

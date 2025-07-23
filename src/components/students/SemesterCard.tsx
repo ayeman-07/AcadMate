@@ -2,7 +2,7 @@
 
 import React, { FC } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { ArrowUp, Trash2 } from "lucide-react";
 
 interface SemesterCardProps {
@@ -22,7 +22,7 @@ const SemesterCard: FC<SemesterCardProps> = ({
   onDelete,
   section = "students"
 }) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const getSemesterLink = () => {
     const formattedSemester = semester.replace(/\s+/g, "").toLowerCase();

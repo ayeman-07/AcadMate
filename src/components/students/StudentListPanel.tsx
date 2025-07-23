@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -37,7 +37,9 @@ export default function StudentListPanel({ department, semester }: Props) {
 
   const isAllDepartments = department.toLowerCase() === "all";
 
-  const fetchStudents = async () => {
+  // import { useCallback } from "react"; // Moved to top-level imports
+
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -56,15 +58,16 @@ export default function StudentListPanel({ department, semester }: Props) {
       setStudents(data.students);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
+      console.error("Failed to fetch students:", err);
       toast.error("Failed to fetch students");
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, department, semester, semFilter]);
 
   useEffect(() => {
     fetchStudents();
-  }, [department, semester, search, semFilter, page]);
+  }, [fetchStudents]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this student?")) return;
@@ -75,6 +78,7 @@ export default function StudentListPanel({ department, semester }: Props) {
       toast.success("Student deleted");
       fetchStudents();
     } catch (err) {
+      console.error("Failed to delete student:", err);
       toast.error("Failed to delete student");
     }
   };
