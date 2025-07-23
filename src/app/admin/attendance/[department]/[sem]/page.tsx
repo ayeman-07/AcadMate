@@ -99,11 +99,18 @@ export default function AttendancePage() {
           attendanceData.success &&
           Array.isArray(attendanceData.attendance)
         ) {
+          type AttendanceRecord = {
+            studentId: string | { _id: string };
+            isPresent: boolean;
+          };
+
           const attMap: AttendanceMap = {};
-          attendanceData.attendance.forEach((record: any) => {
-            attMap[record.studentId._id || record.studentId] = record.isPresent
-              ? "present"
-              : "absent";
+          attendanceData.attendance.forEach((record: AttendanceRecord) => {
+            const studentId =
+              typeof record.studentId === "string"
+          ? record.studentId
+          : record.studentId._id;
+            attMap[studentId] = record.isPresent ? "present" : "absent";
           });
           setAttendance(attMap);
         }
