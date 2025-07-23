@@ -58,6 +58,7 @@ export default function AttendancePage() {
           toast.error(data.error || "Failed to load subjects");
         }
       } catch (err) {
+        console.log(err)
         toast.error("Failed to fetch subject allotments");
       }
     };
