@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -22,11 +22,7 @@ interface Subject {
 }
 
 export default function AttendanceEntryPage() {
-  const searchParams = useSearchParams();
-  const subjectName = searchParams.get("subject");
-  const batchCode = searchParams.get("batchCode");
-  const semester = searchParams.get("semester");
-
+  const { subjectName, batchCode, semester } = useParams();
   const [date, setDate] = useState<Date>(() => new Date());
   const [attendance, setAttendance] = useState<{
     [studentId: string]: "present" | "absent";

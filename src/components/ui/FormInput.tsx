@@ -15,8 +15,8 @@ interface FormInputProps {
   required?: boolean;
   autoComplete?: string;
   error?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function FormInput({

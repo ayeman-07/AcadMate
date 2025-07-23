@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 // GET: Fetch student by ID
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest
 ) {
   await connectToDB();
-
-  const student = await Student.findById(params.id).lean();
+  const pathname = req.nextUrl.pathname;
+  const id = pathname.split("/").pop();
+  const student = await Student.findById(id).lean();
 
   if (!student) {
     return NextResponse.json({ message: "Student not found" }, { status: 404 });
@@ -20,15 +20,16 @@ export async function GET(
 
 // PUT: Update student data, including avatar as base64
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest
 ) {
   try {
+    const pathname = req.nextUrl.pathname;
+    const id = pathname.split("/").pop();
     await connectToDB();
 
     const updatedData = await req.json(); // ✅ read JSON instead of formData
 
-    const student = await Student.findById(params.id);
+    const student = await Student.findById(id);
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, { status: 404 });
     }

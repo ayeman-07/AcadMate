@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 interface Student {
   _id: string;
@@ -24,10 +24,7 @@ const EXAMS = [
 ];
 
 export default function ViewResultPage() {
-  const searchParams = useSearchParams();
-  const subjectName = searchParams.get("subject");
-  const batchCode = searchParams.get("batchCode");
-  const semester = searchParams.get("semester");
+  const { subjectName, batchCode, semester } = useParams();
 
   const [students, setStudents] = useState<Student[]>([]);
   const [results, setResults] = useState<Record<string, Result[]>>({});
@@ -42,7 +39,8 @@ export default function ViewResultPage() {
         return;
       }
 
-      const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
+      const batchCodeStr = Array.isArray(batchCode) ? batchCode.join("") : batchCode;
+      const modifiedBatchCode = batchCodeStr.replace("-", `${semester}0`);
 
       console.log("Fetching with:", { subjectName, modifiedBatchCode, semester });
       setLoading(true);

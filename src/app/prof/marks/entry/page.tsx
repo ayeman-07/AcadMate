@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface Student {
@@ -27,10 +27,7 @@ const EXAMS = {
 };
 
 export default function MarksEntryPage() {
-  const searchParams = useSearchParams();
-  const semester = searchParams.get("semester");
-  const subjectName = searchParams.get("subject");
-  const batchCode = searchParams.get("batchCode");
+  const { batchCode, subjectName, semester }  = useParams();
 
   const [students, setStudents] = useState<Student[]>([]);
   const [subject, setSubject] = useState<Subject | null>(null);
@@ -78,7 +75,8 @@ export default function MarksEntryPage() {
         });
 
         // Fetch previously entered marks
-        const modifiedBatchCode = batchCode.replace("-", `${semester}0`);
+        const batchCodeStr = Array.isArray(batchCode) ? batchCode.join("-") : batchCode;
+        const modifiedBatchCode = batchCodeStr.replace("-", `${semester}0`);
         const resultRes = await fetch("/api/result/fetch-marks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -157,8 +155,8 @@ export default function MarksEntryPage() {
 
     const requestBody = {
       subjectName: subject?.name, // use optional chaining
-      batchCode: `${batchCode?.split("-")[0]}${semester}0${
-        batchCode?.split("-")[1]
+      batchCode: `${(Array.isArray(batchCode) ? batchCode.join("-") : batchCode)?.split("-")[0]}${semester}0${
+        (Array.isArray(batchCode) ? batchCode.join("-") : batchCode)?.split("-")[1]
       }`,
       sem: semester,
       exam,
