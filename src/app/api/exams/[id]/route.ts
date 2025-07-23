@@ -42,7 +42,6 @@ export async function PUT(
   context: { params: { id: string } }
 ) {
   const { params } = context;
-) {
   try {
     await connectToDB();
     const session = await getServerSession(authOptions);
@@ -65,7 +64,7 @@ export async function PUT(
       );
     }
 
-    const body = await req.json();
+    const body = await request.json();
     const updatedExam = await Exam.findByIdAndUpdate(
       params.id,
       { $set: body },
@@ -80,16 +79,16 @@ export async function PUT(
       { status: 500 }
     );
   }
+}
+
 export async function DELETE(
   request: Request,
   context: { params: { id: string } }
 ) {
   const { params } = context;
-  { params }: { params: { id: string } }
-) {
-  try {
-    await connectToDB();
-    const session = await getServerSession(authOptions);
+try {
+  await connectToDB();
+  const session = await getServerSession(authOptions);
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
