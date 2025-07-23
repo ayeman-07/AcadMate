@@ -23,8 +23,11 @@ interface Student {
 
 interface Subject {
   _id: string;
-  subjectCode: string;
-  subjectName: string;
+  code: string;
+  name: string;
+  dept: string;
+  isPractical: boolean;
+  credits: number;
 }
 
 const SEMESTERS = ["1", "2", "3", "4", "5", "6", "7", "8"];
@@ -73,32 +76,29 @@ export default function StudentListPanel({ department, semester }: Props) {
   }, [department, semester, search, semFilter, page]);
 
   useEffect(() => {
+   
+    if (!department || !semester) return;
+
     const fetchSubjects = async () => {
-      if (!department || !semester) return;
-
-      const numericSemester = semester.replace(/^sem/, "");
-
       try {
-        const params = new URLSearchParams({
-          branch: department,
-          semester: numericSemester,
-        });
-
-        const res = await fetch(`/api/subject-allotment?${params.toString()}`);
-
-        if (!res.ok) throw new Error("Failed to fetch subjects");
-
+        const res = await fetch(
+          `/api/subject-allotment?branch=${department}&semester=${semester[3]}`
+        );
         const data = await res.json();
-        console.log("Subject Allotment Response:", data); // ✅ Log API response
-        setSubjects(data.subjects || []);
+        console.log("Fetched subjects:", data.subjects);
+        if (res.ok && Array.isArray(data.subjects)) {
+          setSubjects(data.subjects);
+          setSelectedSubject(data.subjects[0]?._id || "");
+        } else {
+          toast.error(data.error || "Failed to load subjects");
+        }
       } catch (err) {
-        console.error("Failed to fetch subjects:", err);
-        toast.error("Failed to fetch subjects");
+        console.log(err);
+        toast.error("Failed to fetch subject allotments");
       }
     };
-    if (department && semester) {
-      fetchSubjects();
-    }
+
+    fetchSubjects();
   }, [department, semester]);
 
   return (
@@ -115,8 +115,8 @@ export default function StudentListPanel({ department, semester }: Props) {
         >
           <option value="">Select Subject</option>
           {subjects.map((subject) => (
-            <option key={subject._id} value={subject.subjectCode}>
-              {subject.subjectName} ({subject.subjectCode})
+            <option key={subject._id} value={subject._id}>
+              {subject.name}
             </option>
           ))}
         </select>

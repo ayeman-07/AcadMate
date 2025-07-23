@@ -1,4 +1,4 @@
-import StudentListPanel from "@/components/students/ResultListPanel";
+import ResultListPanel from "@/components/students/ResultListPanel";
 import Link from "next/link";
 
 export default async function StudentBatchPage({ params }: {params: Promise<{ department: string; sem: string }>}) {
@@ -9,7 +9,7 @@ export default async function StudentBatchPage({ params }: {params: Promise<{ de
   return (
     <main className="p-6 text-zinc-100">
       {isValidSemester ? (
-        <StudentListPanel department={normalizedDept} semester={sem} />
+        <ResultListPanel department={normalizedDept} semester={sem} />
       ) : (
         <div className="flex h-[70vh] w-full flex-col items-center justify-center space-y-6">
           <p className="bg-zinc-800/60 px-8 py-4 rounded-lg text-xl font-semibold text-red-400/80 shadow-md border border-zinc-700">

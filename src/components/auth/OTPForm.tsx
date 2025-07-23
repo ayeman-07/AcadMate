@@ -157,7 +157,7 @@ export default function OTPForm({ email, role }: OTPFormProps) {
         </motion.div>
       )}
 
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-2 text-gray-300">
         {otp.map((digit, index) => (
           <motion.input
             key={index}
