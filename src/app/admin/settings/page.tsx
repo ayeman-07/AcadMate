@@ -53,7 +53,8 @@ async function updateAdminProfile(formData: FormData) {
 
   await connectToDB();
 
-  const updateFields: any = { name, phoneNumber };
+  const updateFields: { name: string; phoneNumber?: string; password?: string } = { name };
+  if (phoneNumber) updateFields.phoneNumber = phoneNumber;
   if (password && password.trim() !== "") {
     updateFields.password = await bcrypt.hash(password, 10);
   }

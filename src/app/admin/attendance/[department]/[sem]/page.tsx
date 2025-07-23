@@ -108,6 +108,7 @@ export default function AttendancePage() {
           setAttendance(attMap);
         }
       } catch (err) {
+        console.log(err);
         toast.error("Failed to load data");
       } finally {
         setLoading(false);
@@ -115,7 +116,7 @@ export default function AttendancePage() {
     };
 
     fetchAttendanceData();
-  }, [selectedSubject, selectedDate, search, page]);
+  }, [branch, subjects, selectedSubject, selectedDate, search, page]);
 
   return (
     <div className="space-y-6">

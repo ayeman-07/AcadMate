@@ -79,14 +79,16 @@ export default function StudentProfilePage() {
         <div className="flex items-center gap-1">
           <input
             type="text"
-            value={(draft[key] as any) || ""}
-            onChange={(e) => setDraft((d) => ({ ...d, [key]: e.target.value }))}
+            value={draft[key] !== undefined ? String(draft[key]) : ""}
+            onChange={(e) =>
+              setDraft((d) => ({ ...d, [key]: e.target.value }))
+            }
             className="px-2 py-1 bg-white/5 rounded text-white flex-1"
           />
           <button
             onClick={() => {
               handleFieldSave(key);
-              setStudent((s) => ({ ...(s as any), [key]: draft[key] }));
+              // Only update draft, student will be updated after API save
             }}
             className="text-green-400 hover:text-green-500 p-1"
             title="Save"
@@ -94,9 +96,13 @@ export default function StudentProfilePage() {
             <Check className="w-4 h-4" />
           </button>
         </div>
-      ) : (
+            ) : (
         <div className="flex items-center gap-1">
-          <p className="text-white">{(student as any)[key] ?? "-"}</p>
+          <p className="text-white">
+            {student[key] !== undefined && student[key] !== null
+              ? String(student[key])
+              : "-"}
+          </p>
           <button
             onClick={() => handleFieldEdit(key)}
             className="text-gray-400 hover:text-gray-500 p-1"
