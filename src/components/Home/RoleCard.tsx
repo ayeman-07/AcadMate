@@ -40,16 +40,16 @@ export function RoleCard({
       className="relative"
     >
       <Link href={href}>
-        <div className="group h-full bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-700">
+        <div className="group h-full bg-slate-800/50 backdrop-blur-sm rounded-xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-700">
           <div
             className={`${color} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-6 transition-colors group-hover:opacity-90`}
           >
             <Icon className="w-6 h-6 text-white" strokeWidth={2} />
           </div>
-          <h2 className="text-xl font-medium text-slate-800 dark:text-slate-100 mb-3 font-montserrat tracking-tight">
+          <h2 className="text-xl font-medium text-slate-100 mb-3 font-montserrat tracking-tight">
             {title}
           </h2>
-          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+          <p className="text-slate-300 text-sm leading-relaxed">
             {description}
           </p>
         </div>
