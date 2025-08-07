@@ -113,7 +113,7 @@ const authOptions: NextAuthOptions = {
             );
 
             const data = await otpVerification.json();
-            console.log(data);
+      
             const isOtpValid = data.message === "OTP verified successfully";
             if (!isOtpValid) throw new Error("Invalid or expired OTP");
           }

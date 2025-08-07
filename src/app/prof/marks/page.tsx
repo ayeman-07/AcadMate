@@ -73,12 +73,6 @@ export default function MarksEntry() {
 
     setIsSubmitting(true);
     try {
-      console.log("Submitting marks:", {
-        examType: selectedExam,
-        sectionId: selectedSection,
-        subject: selectedSubject,
-        marks: studentMarks,
-      });
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 

@@ -27,9 +27,11 @@ export default function Students() {
     "COMPUTER SCIENCE": [],
     "ELECTRONICS & COMMUNICATION": [],
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllSemesters = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch("/api/sem");
         const data: Semester[] = await res.json(); // enriched: name, department, studentCount
@@ -57,6 +59,8 @@ export default function Students() {
         });
       } catch (error) {
         console.error("Failed to load semesters:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,6 +84,7 @@ export default function Students() {
               batches={batches}
               setBatches={setBatches}
               section="students"
+              isLoading={isLoading}
             />
           ))}
         </div>

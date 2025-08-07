@@ -85,7 +85,6 @@ export default function StudentListPanel({ department, semester }: Props) {
           `/api/subject-allotment?branch=${department}&semester=${semester[3]}`
         );
         const data = await res.json();
-        console.log("Fetched subjects:", data.subjects);
         if (res.ok && Array.isArray(data.subjects)) {
           setSubjects(data.subjects);
           setSelectedSubject(data.subjects[0]?._id || "");

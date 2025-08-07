@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       duration,
       subjects, 
     } = body;
-    console.log(body)
+ 
     if (
       !examType ||
       !semester ||

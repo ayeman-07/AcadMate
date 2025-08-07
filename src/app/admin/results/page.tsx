@@ -25,9 +25,11 @@ export default function ResultsPage() {
     "COMPUTER SCIENCE": [],
     "ELECTRONICS & COMMUNICATION": [],
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllSemesters = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch("/api/sem");
         const data: Semester[] = await res.json(); // enriched: name, department, studentCount
@@ -55,6 +57,8 @@ export default function ResultsPage() {
         });
       } catch (error) {
         console.error("Failed to load semesters:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -78,6 +82,7 @@ export default function ResultsPage() {
               batches={batches}
               setBatches={setBatches}
               section="results"
+              isLoading={isLoading}
             />
           ))}
         </div>

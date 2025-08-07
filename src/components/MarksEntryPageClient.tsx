@@ -182,7 +182,7 @@ export default function MarksEntryPageClient() {
       });
 
       const data = await res.json();
-      console.log("Response data:", data);
+    
       if (data.success) {
         toast.success("Marks submitted successfully");
 

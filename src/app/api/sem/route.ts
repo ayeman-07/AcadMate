@@ -82,8 +82,6 @@ export async function GET() {
       return a.department.localeCompare(b.department);
     });
 
-    console.log("Final enriched semesters:", finalResult);
-
     return NextResponse.json(finalResult);
   } catch (err) {
     console.error("Error fetching enriched semesters:", err);

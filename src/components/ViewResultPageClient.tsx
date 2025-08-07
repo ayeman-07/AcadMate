@@ -45,7 +45,6 @@ export default function ViewResultPageClient() {
       const batchCodeStr = Array.isArray(batchCode) ? batchCode.join("") : batchCode;
       const modifiedBatchCode = batchCodeStr.replace("-", `${semester}0`);
 
-      console.log("Fetching with:", { subjectName, modifiedBatchCode, semester });
       setLoading(true);
 
       try {
@@ -85,7 +84,6 @@ export default function ViewResultPageClient() {
           throw new Error("Invalid JSON response from server.");
         }
 
-        console.log("Fetched results:", resultData);
        
 
         const grouped: Record<string, Result[]> = {};
